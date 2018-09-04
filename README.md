@@ -1,6 +1,4 @@
-# Axibase Charts Syntax
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/733f4b159db44cff920edc92721d0e38)](https://app.codacy.com/app/kirmanak/Axibase-Charts-Syntax?utm_source=github.com&utm_medium=referral&utm_content=kirmanak/Axibase-Charts-Syntax&utm_campaign=badger) [![Build Status](https://travis-ci.org/kirmanak/Axibase-Charts-Syntax.svg?branch=master)](https://travis-ci.org/kirmanak/Axibase-Charts-Syntax) [![CodeFactor](https://www.codefactor.io/repository/github/kirmanak/axibase-charts-syntax/badge)](https://www.codefactor.io/repository/github/kirmanak/axibase-charts-syntax)
+# Axibase Charts VSCode
 
 VSCode extension supporting [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md) syntax. The plugin performs syntax highlighting and validation.
 
@@ -11,7 +9,7 @@ After the release, the plugin will be available at VSCode marketplace. For now, 
 * Clone `Axibase Charts Syntax` repository.
 
   ```bash
-  git clone https://github.com/kirmanak/axibase-charts-syntax.git ~/.vscode/extensions/axibase-charts
+  git clone https://github.com/axibase/axibase-charts-vscode.git ~/.vscode/extensions/axibase-charts
   ```
 
 * `cd` into the newly created directory.
