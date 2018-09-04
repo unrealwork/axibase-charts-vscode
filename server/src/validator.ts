@@ -796,6 +796,7 @@ export class Validator {
             this.checkAliases();
             this.deAliases = [];
             this.aliases = [];
+            this.settingValues.clear();
         }
         this.previousSettings = this.currentSettings;
         this.previousSection = this.currentSection;
