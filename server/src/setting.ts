@@ -1,6 +1,13 @@
 import { Script } from "./script";
 
 export class Setting {
+    /**
+     * Lowercases the string and deletes non-alphabetic characters
+     * @param str string to be cleared
+     * @returns cleared string
+     */
+    public static clearSetting: (str: string) => string = (str: string): string => str.toLowerCase()
+        .replace(/[^a-z]/g, "")
     public readonly defaultValue?: string | number | boolean;
     public readonly description: string = "";
     public readonly displayName: string = "";
@@ -18,7 +25,6 @@ export class Setting {
     public constructor(setting?: Setting) {
         Object.assign(this, setting);
         this.enum = this.enum.map((v: string): string => v.toLowerCase());
-        this.name = this.displayName.toLowerCase()
-            .replace(/[^a-z]/g, "");
+        this.name = Setting.clearSetting(this.displayName);
     }
 }
