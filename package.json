@@ -70,7 +70,7 @@
         "commands": [
             {
                 "command": "axibasecharts.showPortal",
-                "title": "Show preview",
+                "title": "Preview Charts",
                 "category": "Axibase Charts",
                 "icon": "./images/preview.svg"
             },
