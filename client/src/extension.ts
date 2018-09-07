@@ -2,15 +2,14 @@ import { join } from "path";
 // tslint:disable-next-line:no-require-imports
 import urlRegex = require("url-regex");
 import {
-    commands, ConfigurationChangeEvent, Disposable, ExtensionContext, TextDocument, Uri, ViewColumn,
+    commands, ConfigurationChangeEvent, ExtensionContext, TextDocument, ViewColumn,
     window, workspace, WorkspaceConfiguration,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
 } from "vscode-languageclient";
-import { AxibaseChartsProvider } from "./axibaseChartsProvider";
+import { AxibaseChartsProvider, IConnectionDetails } from "./axibaseChartsProvider";
 
-const previewUri: string = "axibaseCharts://authority/axibaseCharts";
 const configSection: string = "axibaseCharts";
 export const languageId: string = "axibasecharts";
 const errorMessage: string = "Configure connection properties in VSCode > Preferences > Settings. Open Settings," +
@@ -50,41 +49,61 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
 
     let provider: AxibaseChartsProvider | undefined;
     context.subscriptions.push(workspace.onDidSaveTextDocument((document: TextDocument) => {
-        if (window.activeTextEditor && document.uri === window.activeTextEditor.document.uri && provider) {
-            provider.update(Uri.parse(previewUri));
+        if (provider && provider.document.uri === document.uri) {
+            provider.update();
         }
     }));
     context.subscriptions.push(window.onDidChangeActiveTextEditor(() => {
         if (window.activeTextEditor && window.activeTextEditor.document.languageId === languageId && provider) {
-            provider.update(Uri.parse(previewUri));
+            provider.document = window.activeTextEditor.document;
         }
     }));
-    let providerRegistration: Disposable | undefined;
     context.subscriptions.push(commands.registerCommand(`${languageId}.showPortal`, async (): Promise<void> => {
+        if (!window.activeTextEditor) {
+            return Promise.resolve();
+        }
+        const document: TextDocument = window.activeTextEditor.document;
+        if (document.languageId !== languageId) {
+            return Promise.resolve();
+        }
         if (!provider) {
+            let details: IConnectionDetails;
             try {
-                provider = await constructProvider();
+                details = await constructConnection();
             } catch (err) {
                 window.showErrorMessage(err);
 
-                return Promise.reject();
+                return Promise.resolve();
             }
+            provider = new AxibaseChartsProvider(details, document);
 
-            providerRegistration = workspace.registerTextDocumentContentProvider("axibaseCharts", provider);
-            context.subscriptions.push(providerRegistration);
-            provider.update(Uri.parse(previewUri));
+            context.subscriptions.push(workspace.registerTextDocumentContentProvider("axibaseCharts", provider));
+            provider.update();
         }
 
-        commands.executeCommand("vscode.previewHtml", previewUri, ViewColumn.Two, "Portal");
+        commands.executeCommand("vscode.previewHtml", AxibaseChartsProvider.previewUri, ViewColumn.Two, "Portal");
     }));
-    context.subscriptions.push(workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent): void => {
-        if (e.affectsConfiguration(configSection) && providerRegistration && provider) {
-            context.subscriptions.splice(context.subscriptions.indexOf(providerRegistration), 1);
-            providerRegistration.dispose();
-            provider = undefined;
-            window.showInformationMessage("Please, re-open portal preview after modification of settings");
-        }
-    }));
+    context.subscriptions.push(
+        workspace.onDidChangeConfiguration(async (e: ConfigurationChangeEvent): Promise<void> => {
+            if (e.affectsConfiguration(configSection) && provider) {
+                const answer: string | undefined =
+                    await window.showInformationMessage("Current connection details were modified.", "Reload");
+                if (answer === "Reload") {
+                    let details: IConnectionDetails;
+                    try {
+                        details = await constructConnection();
+                    } catch (err) {
+                        window.showErrorMessage(err);
+
+                        return Promise.resolve();
+                    }
+                    provider.changeSettings(details);
+
+                    return Promise.resolve();
+                }
+            }
+        }),
+    );
 };
 
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {
@@ -99,7 +118,7 @@ const validateUrl: (url: string) => boolean = (url: string): boolean =>
     urlRegex({ exact: true, strict: true })
         .test(url);
 
-const constructProvider: () => Promise<AxibaseChartsProvider> = async (): Promise<AxibaseChartsProvider> => {
+const constructConnection: () => Promise<IConnectionDetails> = async (): Promise<IConnectionDetails> => {
     const config: WorkspaceConfiguration = workspace.getConfiguration(configSection);
     const protocol: string | undefined = config.get("protocol");
     if (!protocol) {
@@ -133,5 +152,5 @@ const constructProvider: () => Promise<AxibaseChartsProvider> = async (): Promis
         }
     }
 
-    return new AxibaseChartsProvider(url, username, password);
+    return { url, username, password };
 };

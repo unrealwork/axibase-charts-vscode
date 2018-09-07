@@ -2,13 +2,33 @@ import { ClientRequest, IncomingMessage, OutgoingMessage, request as http } from
 import { request as https, RequestOptions } from "https";
 import { URL } from "url";
 import {
-    Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor,
-    Uri, window,
+    Event, EventEmitter, TextDocument, TextDocumentContentProvider, Uri, window,
 } from "vscode";
 import { languageId } from "./extension";
 
+export interface IConnectionDetails {
+    password?: string;
+    url: string;
+    username?: string;
+}
+
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
+
+    public set document(document: TextDocument) {
+        this.innerDocument = document;
+        this.update();
+    }
+
+    public get document(): TextDocument {
+        return this.innerDocument;
+    }
+    public get onDidChange(): Event<Uri> {
+        return this.onDidChangeEmitter.event;
+    }
+
+    public static readonly previewUri: Uri = Uri.parse("axibaseCharts://authority/axibaseCharts");
     private cookie: string | undefined;
+    private innerDocument: TextDocument;
     private readonly onDidChangeEmitter: EventEmitter<Uri>;
     private password: string | undefined;
     private text: string | undefined;
@@ -16,31 +36,35 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     private username: string | undefined;
     private withCredentials: string | undefined;
 
-    public get onDidChange(): Event<Uri> {
-        return this.onDidChangeEmitter.event;
-    }
-
-    public constructor(url: string, username?: string, password?: string) {
+    public constructor(details: IConnectionDetails, document: TextDocument) {
         this.onDidChangeEmitter = new EventEmitter<Uri>();
-        this.url = url;
-        if (username && password) {
-            this.username = username;
-            this.password = password;
+        this.innerDocument = document;
+        this.url = details.url;
+        if (details.username && details.password) {
+            this.username = details.username;
+            this.password = details.password;
         } else {
             this.withCredentials = this.url;
         }
     }
 
+    public changeSettings(details: IConnectionDetails): void {
+        delete this.cookie;
+        this.url = details.url;
+        if (details.username && details.password) {
+            this.username = details.username;
+            this.password = details.password;
+        } else {
+            this.withCredentials = this.url;
+        }
+        this.update();
+    }
+
     public async provideTextDocumentContent(): Promise<string> {
-        const editor: TextEditor | undefined = window.activeTextEditor;
-        if (!editor) {
+        if (this.innerDocument.languageId !== languageId) {
             return Promise.reject();
         }
-        const document: TextDocument = editor.document;
-        if (document.languageId !== languageId) {
-            return Promise.reject();
-        }
-        this.text = deleteComments(document.getText());
+        this.text = deleteComments(this.innerDocument.getText());
         this.clearUrl();
         this.replaceImports();
 
@@ -68,8 +92,8 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         return html;
     }
 
-    public update(uri: Uri): void {
-        this.onDidChangeEmitter.fire(uri);
+    public update(): void {
+        this.onDidChangeEmitter.fire(AxibaseChartsProvider.previewUri);
     }
 
     private addUrl(): void {
