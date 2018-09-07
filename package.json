@@ -41,7 +41,8 @@
                     "description": "Choose the protocol to connect to the ATSD server.",
                     "default": "https",
                     "enum": [
-                        "https", "http"
+                        "https",
+                        "http"
                     ]
                 },
                 "axibaseCharts.port": {

@@ -82,7 +82,6 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
             context.subscriptions.splice(context.subscriptions.indexOf(providerRegistration), 1);
             providerRegistration.dispose();
             provider = undefined;
-            commands.executeCommand(`${languageId}.showPortal`);
         }
     }));
 };
@@ -125,7 +124,8 @@ const constructProvider: () => Promise<AxibaseChartsProvider> = async (): Promis
         try {
             password = await window.showInputBox({
                 ignoreFocusOut: true, password: true,
-                prompt: "Please, enter the password. Can not be stored in settings.",
+                prompt: `Enter the password for user ${username} to connect ` +
+                    `to ${address}:${port}. Exit VSCode to terminate the session.`,
             });
         } catch (err) {
             return Promise.reject(err);
