@@ -28,26 +28,26 @@
                 },
                 "axibaseCharts.address": {
                     "type": "string",
-                    "default": "localhost",
-                    "description": "What URL should be used to show the preview."
+                    "default": null,
+                    "description": "Enter the server hostname or IP address."
                 },
                 "axibaseCharts.username": {
                     "type": "string",
                     "default": null,
-                    "description": "What username should be used to show the preview. Empty if API is open for guests."
+                    "description": "Enter user name. Leave empty if api.guest.access.enabled is true."
                 },
                 "axibaseCharts.protocol": {
                     "type": "string",
-                    "description": "What protocol should be used to show the preview.",
-                    "default": "http",
+                    "description": "Choose the protocol to connect to the ATSD server.",
+                    "default": "https",
                     "enum": [
-                        "http", "https"
+                        "https", "http"
                     ]
                 },
                 "axibaseCharts.port": {
                     "type": "integer",
-                    "default": 8088,
-                    "description": "What port should be used to show the preview."
+                    "default": 8443,
+                    "description": "Enter the server port number."
                 }
             }
         },
