@@ -26,7 +26,7 @@
                     "default": false,
                     "description": "Controls whether inline JS functions are validated or not."
                 },
-                "axibaseCharts.address": {
+                "axibaseCharts.hostname": {
                     "type": "string",
                     "default": null,
                     "description": "Enter the server hostname or IP address."

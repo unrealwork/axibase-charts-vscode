@@ -127,7 +127,7 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
     if (!protocol) {
         return Promise.reject(errorMessage);
     }
-    const address: string | undefined = config.get("address");
+    const address: string | undefined = config.get("hostname");
     if (!address) {
         return Promise.reject(errorMessage);
     }
