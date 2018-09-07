@@ -82,6 +82,7 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
             context.subscriptions.splice(context.subscriptions.indexOf(providerRegistration), 1);
             providerRegistration.dispose();
             provider = undefined;
+            window.showInformationMessage("Please, re-open portal preview after modification of settings");
         }
     }));
 };
