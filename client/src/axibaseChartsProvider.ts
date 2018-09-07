@@ -5,6 +5,7 @@ import {
     Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor,
     Uri, window,
 } from "vscode";
+import { languageId } from "./extension";
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
     private cookie: string | undefined;
@@ -36,7 +37,7 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
             return Promise.reject();
         }
         const document: TextDocument = editor.document;
-        if (document.languageId !== "axibasecharts") {
+        if (document.languageId !== languageId) {
             return Promise.reject();
         }
         this.text = deleteComments(document.getText());
@@ -46,12 +47,6 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         if (this.password && this.username && !this.cookie) {
             try {
                 [this.withCredentials, this.cookie] = await this.performRequest(this.username, this.password);
-                if (new URL(this.withCredentials).pathname.includes("login")) {
-                    const errorMessage: string = "Credentials are incorrect";
-                    window.showErrorMessage(errorMessage);
-
-                    return Promise.reject(errorMessage);
-                }
             } catch (err) {
                 window.showErrorMessage(err);
 
@@ -59,6 +54,12 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
             } finally {
                 delete this.password;
                 delete this.username;
+            }
+            if (new URL(this.withCredentials).pathname.includes("login")) {
+                const errorMessage: string = "Credentials are incorrect";
+                window.showErrorMessage(errorMessage);
+
+                return Promise.reject(errorMessage);
             }
         }
         this.addUrl();
@@ -158,7 +159,8 @@ document.cookie = "${this.cookie}";
             path: "/login-processing",
             port: url.port,
             protocol: url.protocol,
-            rejectUnauthorized: false,
+            rejectUnauthorized: false, // allows self-signed certificates
+            timeout: 500, // milliseconds (0.5 s)
         };
         const request: (options: RequestOptions | string | URL, callback?: (res: IncomingMessage) => void)
             => ClientRequest = (url.protocol === "https:") ? https : http;
