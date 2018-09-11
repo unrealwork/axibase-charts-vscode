@@ -201,10 +201,6 @@ const performRequest: (address: string, username: string, password: string) => P
                     if (!cookies || cookies.length < 1) {
                         return reject(new Error("Cookie is empty"));
                     }
-                    let result: string = "";
-                    for (const cookie of cookies) {
-                        result += `document.cookie = '${cookie}';`;
-                    }
                     const server: string | string[] | undefined = res.headers.server;
                     let atsd: boolean;
                     if (!server || Array.isArray(server)) {
@@ -213,7 +209,7 @@ const performRequest: (address: string, username: string, password: string) => P
                         const lowerCased: string = server.toLowerCase();
                         atsd = lowerCased.includes("atsd") ? true : false;
                     }
-                    resolve([result, atsd]);
+                    resolve([cookies[0], atsd]);
                 });
 
                 outgoing.on("error", reject);
