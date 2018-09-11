@@ -133,7 +133,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 
 <body onload="onBodyLoad()">
 <script>
-document.cookie = "${this.cookie}";
+document.cookie = '${this.cookie}';
 </script>
 	<div class="portalView"></div>
 	<div id="dialog"></div>
