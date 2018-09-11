@@ -166,6 +166,7 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
 
             return Promise.reject(error);
         }
+        window.showInformationMessage(`Connected to ${address}:${port} as ${username}`);
     }
     atsd = atsd === undefined ? true : atsd;
 
