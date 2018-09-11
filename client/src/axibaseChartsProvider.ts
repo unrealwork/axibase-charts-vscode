@@ -98,6 +98,13 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 <html>
 
 <head>
+    <script type="text/javascript">
+        var original = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+            original.apply(this, arguments);
+            this.withCredentials = true;
+        };
+    </script>
 	<link rel="stylesheet" type="text/css"
 		href="${this.url}/web/js/portal/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
     <link rel="stylesheet" type="text/css" href="${this.url}/web/css/portal/charts.min.css">
