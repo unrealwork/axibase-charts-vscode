@@ -62,14 +62,14 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
         }
     }));
     context.subscriptions.push(commands.registerCommand(`${languageId}.showPortal`, async (): Promise<void> => {
-        if (!window.activeTextEditor) {
-            return Promise.resolve();
-        }
-        const document: TextDocument = window.activeTextEditor.document;
-        if (document.languageId !== languageId) {
-            return Promise.resolve();
-        }
         if (!provider) {
+            if (!window.activeTextEditor) {
+                return Promise.resolve();
+            }
+            const document: TextDocument = window.activeTextEditor.document;
+            if (document.languageId !== languageId) {
+                return Promise.resolve();
+            }
             let details: IConnectionDetails;
             try {
                 details = await constructConnection();

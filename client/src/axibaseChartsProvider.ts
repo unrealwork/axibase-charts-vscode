@@ -139,9 +139,9 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 </head>
 
 <body onload="onBodyLoad()">
-<script>
-document.cookie = '${this.cookie}';
-</script>
+    <script>
+        document.cookie = '${this.cookie}';
+    </script>
 	<div class="portalView"></div>
 	<div id="dialog"></div>
 </body>
