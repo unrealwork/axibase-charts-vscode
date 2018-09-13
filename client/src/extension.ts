@@ -24,19 +24,19 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // The server is implemented in node
     const serverModule: string = context.asAbsolutePath(join("server", "out", "server.js"));
     // The debug options for the server
-    const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
+    const debugOptions: ForkOptions = {execArgv: ["--nolazy", "--inspect=6009"]};
 
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        debug: { module: serverModule, options: debugOptions, transport: TransportKind.ipc },
-        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: {module: serverModule, options: debugOptions, transport: TransportKind.ipc},
+        run: {module: serverModule, transport: TransportKind.ipc},
     };
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{ language: languageId, scheme: "file" }],
+        documentSelector: [{language: languageId, scheme: "file"}],
         outputChannelName: "Axibase Charts",
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
@@ -118,7 +118,7 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
 };
 
 const validateUrl: (url: string) => boolean = (url: string): boolean =>
-    urlRegex({ exact: true, strict: true })
+    urlRegex({exact: true, strict: true})
         .test(url);
 
 const constructConnection: () => Promise<IConnectionDetails> = async (): Promise<IConnectionDetails> => {
@@ -155,7 +155,7 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
         }
     }
 
-    let cookie: string | undefined;
+    let cookie: string[] | undefined;
     let atsd: boolean | undefined;
     if (password && username) {
         try {
@@ -170,14 +170,15 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
     }
     atsd = atsd === undefined ? true : atsd;
 
-    return { url, cookie, atsd };
+    return {url, cookie, atsd};
 };
-const performRequest: (address: string, username: string, password: string) => Promise<[string, boolean]> =
-    async (address: string, username: string, password: string): Promise<[string, boolean]> => {
+const performRequest: (address: string, username: string, password: string) => Promise<[string[], boolean]> =
+    async (address: string, username: string, password: string): Promise<[string[], boolean]> => {
         const url: URL = new URL(address);
         const options: RequestOptions = {
             headers: {
-                Authorization: `Basic ${new Buffer(`${username}:${password}`).toString("base64")}`,
+                "Authorization": `Basic ${new Buffer(`${username}:${password}`).toString("base64")}`,
+                "user-agent": "axibase-charts-vscode",
             },
             hostname: url.hostname,
             method: "GET",
@@ -190,8 +191,8 @@ const performRequest: (address: string, username: string, password: string) => P
         const request: (options: RequestOptions | string | URL, callback?: (res: IncomingMessage) => void)
             => ClientRequest = (url.protocol === "https:") ? https : http;
 
-        return new Promise<[string, boolean]>(
-            (resolve: (result: [string, boolean]) => void, reject: (err: Error) => void): void => {
+        return new Promise<[string[], boolean]>(
+            (resolve: (result: [string[], boolean]) => void, reject: (err: Error) => void): void => {
                 const outgoing: OutgoingMessage = request(options, (res: IncomingMessage) => {
                     res.on("error", reject);
                     if (res.statusCode !== 200) {
@@ -209,7 +210,7 @@ const performRequest: (address: string, username: string, password: string) => P
                         const lowerCased: string = server.toLowerCase();
                         atsd = lowerCased.includes("atsd") ? true : false;
                     }
-                    resolve([cookies[0], atsd]);
+                    resolve([cookies, atsd]);
                 });
 
                 outgoing.on("error", reject);

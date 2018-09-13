@@ -5,12 +5,11 @@ import { languageId } from "./extension";
 
 export interface IConnectionDetails {
     atsd: boolean;
-    cookie?: string;
+    cookie?: string[];
     url: string;
 }
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
-
     public set document(document: TextDocument) {
         this.innerDocument = document;
         this.update();
@@ -19,14 +18,15 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     public get document(): TextDocument {
         return this.innerDocument;
     }
+
     public get onDidChange(): Event<Uri> {
         return this.onDidChangeEmitter.event;
     }
 
     public static readonly previewUri: Uri = Uri.parse("axibaseCharts://authority/axibaseCharts");
     private atsd: boolean;
-    private cookie: string | undefined;
     private innerDocument: TextDocument;
+    private jsessionid: string | undefined;
     private readonly onDidChangeEmitter: EventEmitter<Uri>;
     private text: string | undefined;
     private url: string;
@@ -35,13 +35,19 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         this.onDidChangeEmitter = new EventEmitter<Uri>();
         this.innerDocument = document;
         this.url = details.url;
-        this.cookie = details.cookie;
+        if (details.cookie) {
+            this.jsessionid = details.cookie[0].split(";")[0]
+                .split("=")[1];
+        }
         this.atsd = details.atsd;
     }
 
     public changeSettings(details: IConnectionDetails): void {
         this.url = details.url;
-        this.cookie = details.cookie;
+        if (details.cookie) {
+            this.jsessionid = details.cookie[0].split(";")[0]
+                .split("=")[1];
+        }
         this.atsd = details.atsd;
         this.update();
     }
@@ -96,64 +102,56 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         const theme: string | undefined = workspace.getConfiguration("workbench")
             .get("colorTheme");
         const applyDark: boolean = theme !== undefined && /[Bb]lack|[Dd]ark|[Nn]ight/.test(theme);
-        const jsPath: string =  `${this.url}/${this.atsd ? "web/js/portal" : "JavaScript/portal/JavaScript"}`;
-        const cssPath: string =  `${this.url}/${this.atsd ? "web/css/portal" : "JavaScript/portal/CSS"}`;
 
         return `<!DOCTYPE html>
 <html>
-
 <head>
-    <script type="text/javascript">
-        var original = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function() {
-            original.apply(this, arguments);
-            this.withCredentials = true;
-        };
-    </script>
     <link rel="stylesheet" type="text/css"
-        href="${jsPath}/jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css">
-    <link rel="stylesheet" type="text/css" href="${cssPath}/charts.min.css">
-    ${applyDark ? `<link rel="stylesheet" type="text/css" href="${cssPath}/themes/black/black.css">` : ""}
+        href="${this.resource("jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css",
+                              false)}">
+    <link rel="stylesheet" type="text/css" href="${this.resource("charts.min.css")}">
+    ${applyDark && this.atsd ?
+            `<link rel="stylesheet" type="text/css" href="${this.resource("themes/black/black.css")}">` : ""}
 	<style>
 	  .portalPage body {
 		padding: 0;
 		background: var(--vscode-editor-background);
 	  }
 	</style>
-	<script type="text/javascript" src="${jsPath}/portal_init.js"></script>
+	<script src="${this.resource("portal_init.js")}"></script>
 	<script>
 		if (typeof initializePortal === "function") {
 			initializePortal(function (callback) {
 				var configText = ${JSON.stringify(this.text)};
 				if (typeof callback === "function") {
-					callback([configText, portalPlaceholders = getPortalPlaceholders()]) ;
+					callback([configText, portalPlaceholders = getPortalPlaceholders()]);
 				}
 			});
 		}
 	</script>
-	<script type="text/javascript" src="${jsPath}/jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js"></script>
-	<script type="text/javascript" src="${jsPath}/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js"></script>
-	<script type="text/javascript" src="${jsPath}/d3.min.js"></script>
-	<script type="text/javascript" src="${jsPath}/highlight.pack.js"></script>
-	<script type="text/javascript" src="${jsPath}/charts.min.js"></script>
-</head>
-
-<body onload="onBodyLoad()">
-    <script>
-        document.cookie = '${this.cookie}';
-    </script>
-	<div class="portalView"></div>
-	<div id="dialog"></div>
-</body>
-
-</html>`;
+	<script src="${this.resource("jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js")}"></script>
+	<script src="${this.resource("jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js")}"></script>
+	<script src="${this.resource("d3.min.js")}"></script>
+	<script src="${this.resource("charts.min.js")}"></script>
+	${this.atsd ? `<script src="${this.resource("highlight.pack.js")}"></script>` : ""}
+	<script>
+	    window.initChart = function f() {
+	      $.get('${this.url}/api/v1/ping;jsessionid=${this.jsessionid}', onBodyLoad);
+	    }
+	</script>
+    </head>
+    <body onload="initChart()">
+        <div class="portalView"></div>
+        <div id="dialog"></div>
+    </body>
+    </html>`;
     }
 
     private replaceImports(): void {
         if (!this.text) {
             this.text = "";
         }
-        const address: string = (/\//.test(this.url)) ? `${this.url}/portal/resource/scripts/` : this.url;
+        const address: string = (/\//.test(this.url)) ? `${this.url} / portal / resource / scripts / ` : this.url;
         const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
         const urlPosition: number = 2;
         let match: RegExpExecArray | null = regexp.exec(this.text);
@@ -165,6 +163,14 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
             }
             match = regexp.exec(this.text);
         }
+    }
+
+    private resource(resource: string, isCss?: boolean): string {
+        const jsPath: string = `${this.url}/${this.atsd ? "web/js/portal" : "JavaScript/portal/JavaScript"}`;
+        const cssPath: string = `${this.url}/${this.atsd ? "web/css/portal" : "JavaScript/portal/CSS"}`;
+        const cssType: boolean | undefined = (isCss === undefined) ? /.*[.]css$/.test(resource) : isCss;
+
+        return `${cssType ? cssPath : jsPath}/${resource}${this.atsd ? "" : `;jsessionid=${this.jsessionid}`}`;
     }
 
 }
