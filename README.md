@@ -4,44 +4,10 @@ VSCode extension supporting [Axibase Charts](https://github.com/axibase/charts/b
 
 ## Installation
 
-After the release, the plugin will be available at VSCode marketplace. For now, follow these instructions:
-
-* Clone `Axibase Charts Syntax` repository.
-
-  ```bash
-  git clone https://github.com/axibase/axibase-charts-vscode.git ~/.vscode/extensions/axibase-charts
-  ```
-
-* `cd` into the newly created directory.
-
-  ```bash
-  cd ~/.vscode/extensions/axibase-charts
-  ```
-
-* Install node modules and compile the extension.
-
-  ```bash
-  npm install && npm run compile
-  ```
-
-* Plugin is ready to handle `.config` extension files.
-  * See examples in ``~/.vscode/extensions/axibase-charts/examples/``.
-
-## Update
-
-After the release, the updates will be downloaded and installed automatically by VSCode. For now, follow these instructions:
-
-* `cd` to the plugin folder
-
-```bash
-cd ~/.vscode/extensions/axibase-charts
-```
-
-* Update the plugin
-
-```bash
-git pull && npm install && npm run compile
-```
+* Open VSCode and click **Settings** in the lower left corner.
+* Select **Extensions**.
+* Search for `axibase` in the VSCode Extensions Marketplace.
+* Install the extension as usual and restart VScode.
 
 ## Introduction
 
