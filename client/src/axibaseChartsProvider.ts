@@ -1,5 +1,5 @@
 import {
-    Event, EventEmitter, TextDocument, TextDocumentContentProvider, Uri, workspace,
+    Event, EventEmitter, Extension, extensions, TextDocument, TextDocumentContentProvider, Uri, workspace,
 } from "vscode";
 import { languageId } from "./extension";
 
@@ -24,6 +24,15 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
     }
 
     public static readonly previewUri: Uri = Uri.parse("axibaseCharts://authority/axibaseCharts");
+
+    private static extensionPath(resource: string): string {
+        const extension: Extension<any> | undefined = extensions.getExtension("Axibase.axibasecharts-syntax");
+        if (extension) {
+            return `${extension.extensionPath}/client/${resource}`;
+        }
+        throw new Error("Illegal state");
+    }
+
     private atsd: boolean;
     private innerDocument: TextDocument;
     private jsessionid: string | undefined;
@@ -107,11 +116,10 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 <html>
 <head>
     <link rel="stylesheet" type="text/css"
-        href="${this.resource("jquery-ui-1.9.0.custom/css/smoothness/jquery-ui-1.9.1.custom.min.css",
-                              false)}">
+        href="${AxibaseChartsProvider.extensionPath("resources/css/jquery-ui-1.9.1.custom.min.css")}">
     <link rel="stylesheet" type="text/css" href="${this.resource("charts.min.css")}">
-    ${applyDark && this.atsd ?
-            `<link rel="stylesheet" type="text/css" href="${this.resource("themes/black/black.css")}">` : ""}
+    ${applyDark ?
+            `<link rel="stylesheet" type="text/css" href="${AxibaseChartsProvider.extensionPath("./resources/css/black.css")}">` : ""}
 	<style>
 	  .portalPage body {
 		padding: 0;
@@ -129,11 +137,11 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 			});
 		}
 	</script>
-	<script src="${this.resource("jquery-ui-1.9.0.custom/js/jquery-1.8.2.min.js")}"></script>
-	<script src="${this.resource("jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.min.js")}"></script>
-	<script src="${this.resource("d3.min.js")}"></script>
+	<script src="${AxibaseChartsProvider.extensionPath("resources/js/jquery-1.8.2.min.js")}"></script>
+	<script src="${AxibaseChartsProvider.extensionPath("resources/js/jquery-ui-1.9.0.custom.min.js")}"></script>
+	<script src="${AxibaseChartsProvider.extensionPath("resources/js/d3.min.js")}"></script>
 	<script src="${this.resource("charts.min.js")}"></script>
-	${this.atsd ? `<script src="${this.resource("highlight.pack.js")}"></script>` : ""}
+	<script src="${AxibaseChartsProvider.extensionPath("resources/js/highlight.pack.js")}"></script>
 	<script>
 	    window.initChart = function f() {
 	      $.get('${this.url}/api/v1/ping;jsessionid=${this.jsessionid}', onBodyLoad);
@@ -165,14 +173,14 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         }
     }
 
-    private resource(resource: string, isCss?: boolean): string {
+    private resource(resource: string, isCss?: boolean, isLocal?: boolean): string {
         const jsPath: string = `${this.url}/${this.atsd ? "web/js/portal" : "JavaScript/portal/JavaScript"}`;
         const cssPath: string = `${this.url}/${this.atsd ? "web/css/portal" : "JavaScript/portal/CSS"}`;
         const cssType: boolean | undefined = (isCss === undefined) ? /.*[.]css$/.test(resource) : isCss;
+        const resourcePath: string = isLocal ? AxibaseChartsProvider.extensionPath(resource) : `${cssType ? cssPath : jsPath}/${resource}`;
 
-        return `${cssType ? cssPath : jsPath}/${resource}${this.atsd ? "" : `;jsessionid=${this.jsessionid}`}`;
+        return `${resourcePath}${this.atsd ? "" : `;jsessionid=${this.jsessionid}`}`;
     }
-
 }
 
 const deleteComments: (text: string) => string = (text: string): string => {
