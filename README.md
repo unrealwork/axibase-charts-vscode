@@ -1,102 +1,62 @@
-# Axibase Charts VSCode
+# Axibase Charts for VSCode
 
-VSCode extension supporting [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md) syntax. The plugin performs syntax highlighting and validation.
+**Axibase Charts** extension for Microsoft [Visual Studio Code](https://code.visualstudio.com/) is a design tool that simplifies portal development and data exploration using the [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md) library of declarative graphics. 
+ 
+The extension implements the following functionality:
+
+* Code highlighting
+* Syntax validation
+* Auto-completion
+* Settings reference
+* Live preview
 
 ## Installation
 
-* Open VSCode and click **Settings** in the lower left corner.
-* Select **Extensions**.
+* Open VSCode and click **Extensions** tab in the left menu.
 * Search for `axibase` in the VSCode Extensions Marketplace.
-* Install the extension as usual and restart VScode.
+* Install the extension and reload VScode.
+
+## Requirements
+
+* VSCode 1.27.2+
+
+## Support
+
+Include VSCode and the extension version when opening issues on Github.
+
+* The VSCode version is displayed in the main menu, on the **About Visual Studio code** dialog window.
+
+* The extension version can be accessed on the Extensions tab located in the main menu.
 
 ## Introduction
 
-To display the list of available completions (such as snippets or settings like `entity`, `metric`...), press `Ctrl+Space` on PC or `⌃Space` on Mac.
+Start building a portal usign [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md).
+
+To display the list of available completions, press `Ctrl+Space` on PC or `⌃Space` on Mac.
 
   ![Completion list screenshot](./images/completion.png)
 
-### User Defined Completions
+## Live Preview
 
-#### Snippets
+The extension can show a preview of the portal directly in the VSCode interface by requesting data from the target server. 
 
-* To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
+To configure the target server, open **Preferences > Settings** and enter 'axibase' in the search box. Specify connection properties.
 
-  ![Snippets list screenshot](./images/snippets.png)
+Click **Show Preview** button in the top right corner to view the current portal, even if changes are not saved.
 
-* To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+Enter the user password, if connecting for the first time.
 
-* To add new snippets to the extension use `snippets/snippets.json` file. Pre-configured snippets can be used as examples.
-
-#### Settings
-
-* To add new settings to the completion list, add them to `possibleOptions` array in `server/src/resources.ts` and recompile the extension.
-
-  ```bash
-  npm run compile
-  ```
-
-## Configuration
-
-* `axibaseCharts.validateFunctions`
-  * Default is `false`
-  * If `true`, enables inline JS validation
-  * The plugin executes JS which is written in `script = ... endscript`, `script =`, `value =`, `replace-value =` statements.
-
-* `axibaseCharts.url`
-  * Default is `null`
-  * The URL address of the target ATSD, which is used to show the preview of the portal
-
-* `axibaseCharts.username`
-  * Default is `null`
-  * The username of the ATSD user, which is used to connect to the ATSD to show the preview of the portal
-
-## Bug-reports
-
-Attach VSCode and the plugin version to your bug-report:
-
-* VSCode version is listed in **Help > About** page.
-
-* To get the plugin version, follow these instructions:
-
-  * `cd` to the plugin directory
-
-    ```bash
-    cd ~/.vscode/extensions/axibase-charts
-    ```
-
-  * Print last commit hash, which is the plugin version for now:
-
-    ```bash
-    git rev-parse HEAD
-    ```
-
-## Features
-
-### Show preview
-
-The plugin can show the preview of the portal right in the VSCode using the target ATSD. To see preview follow these instructions:
-
-* Open your portal configuration in `*.config` file (might contain unsaved changes).
-* Press `Show preview` button on title bar (right upper corner)
-* Enter the target ATSD URL if did not configure it in [User settings](#Configuration)
-* Enter the username of the target ATSD user if did not configure it in [User settings](#Configuration)
-
-  You can skip this step via `Esc` or `Enter` buttons if `api.guest.access.enabled` is `true` in `Server properties`.
-* Enter the password if entered the username previously.
-
-To change the target ATSD URL, open `Command Palette` (`F1`, `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac), execute `Axibase Charts: Change the target ATSD URL` command.
-
-### Syntax highlighting
+## Syntax highlighting
 
 Theme used to create the screenshot is `Light+(default light)` (Choose theme by **File > Color theme**).
 
 ![Screenshot of highlighted syntax](./images/syntax.png)
 
-### Code prettifier
+## Code prettifier
 
 ![GIF animation showing updating indents](./images/formatting.gif)
 
-### Snippets
+## Snippets
 
 * `{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget from Charts library
 * `configuration`: creates a new `[configuration]` section with child `[group]` section and several initial settings
@@ -105,7 +65,7 @@ Theme used to create the screenshot is `Light+(default light)` (Choose theme by 
 * `series {type}`, where type one of `with tags`, `detail`, `averaged`: creates a new `[series]` section.
 * `portal: 3x2`: creates a new portal with 6 widgets: 3 columns, 2 rows.
 
-### Validation
+## Validation
 
 The following errors are validated by the plugin:
 
@@ -271,3 +231,15 @@ The following errors are validated by the plugin:
   time-span = 1 hour
   # time-span will be interpreted as a tag
   ```
+  
+## User Defined Completions
+
+### Snippets
+
+* To display the list of pre-configured snippets, press `Ctrl+Shift+P` on PC or `⇧⌘P` on Mac, then write `Insert Snippet`.
+
+  ![Snippets list screenshot](./images/snippets.png)
+
+* To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+
+* To add new snippets to the extension use `snippets/snippets.json` file. Pre-configured snippets can be used as examples.
