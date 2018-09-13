@@ -2,9 +2,9 @@
     "name": "axibasecharts-syntax",
     "displayName": "Axibase Charts",
     "description": "Axibase Charts syntax validation and highlighting extension",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "Apache-2.0",
-    "icon": "./images/icon.png",
+    "icon": "images/icon.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/axibase/axibase-charts-vscode"
