@@ -46,6 +46,15 @@ Click **Show Preview** button in the top right corner to view the current portal
 
 Enter the user password, if connecting for the first time.
 
+By default, the extension doesn't support secure connections to the target servers with untrusted SSL certificates.
+
+To resolve SSL errors:
+
+* Add the untrusted SSL certificate to root on the operating system, or
+* Start VScode with `code --ignore-certificate-errors` to allow [skip certificate validation](https://code.visualstudio.com/docs/setup/network#_ssl-certificates).
+
+> To launch VScode with `code --ignore-certificate-errors`, add code to `PATH` by typing `⇧⌘P`, then `ShelC` on Mac.
+
 ## Syntax highlighting
 
 Theme used to create the screenshot is `Light+(default light)` (Choose theme by **File > Color theme**).
