@@ -1,7 +1,7 @@
 # Axibase Charts for VSCode
 
-**Axibase Charts** extension for Microsoft [Visual Studio Code](https://code.visualstudio.com/) is a design tool that simplifies portal development and data exploration using the [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md) library of declarative graphics. 
- 
+**Axibase Charts** extension for Microsoft [Visual Studio Code](https://code.visualstudio.com/) is a design tool that simplifies portal development and data exploration using the [Axibase Charts](https://github.com/axibase/charts/blob/master/README.md) library of declarative graphics.
+
 The extension implements the following functionality:
 
 * Code highlighting
@@ -14,7 +14,9 @@ The extension implements the following functionality:
 
 * Open VSCode and click **Extensions** tab in the left menu.
 * Search for `axibase` in the VSCode Extensions Marketplace.
-* Install the extension and reload VScode.
+* Install the extension and reload VSCode.
+
+![](./images/install-ext.png)
 
 ## Requirements
 
@@ -26,7 +28,11 @@ Include VSCode and the extension version when opening issues on Github.
 
 * The VSCode version is displayed in the main menu, on the **About Visual Studio code** dialog window.
 
+  ![](./images/vscode-version.png)
+
 * The extension version can be accessed on the Extensions tab located in the main menu.
+
+  ![](./images/ext-version.png)
 
 ## Introduction
 
@@ -38,36 +44,51 @@ To display the list of available completions, press `Ctrl+Space` on PC or `⌃Sp
 
 ## Live Preview
 
-The extension can show a preview of the portal directly in the VSCode interface by requesting data from the target server. 
+The extension can show a preview of the portal directly in the VSCode interface by requesting data from the target server.
 
-To configure the target server, open **Preferences > Settings** and enter 'axibase' in the search box. Specify connection properties.
+To configure the target server, open **Preferences > Settings** and enter 'axibase' in the search box.
 
-Click **Show Preview** button in the top right corner to view the current portal, even if changes are not saved.
+Specify connection properties.
+
+![](./images/vscode-settings.png)
+
+Click **Show Preview** button in the top right corner to view the current portal.
+
+![](./images/preview-button.png)
+
+> The portal is rendered based on the configuration displayed in the editor pane, even if the text is not saved.
 
 Enter the user password, if connecting for the first time.
 
-By default, the extension doesn't support secure connections to the target servers with untrusted SSL certificates.
+![](./images/preview-example.png)
 
-To resolve SSL errors:
+### SSL Certificates
 
-* Add the untrusted SSL certificate to root on the operating system, or
-* Start VScode with `code --ignore-certificate-errors` to allow [skip certificate validation](https://code.visualstudio.com/docs/setup/network#_ssl-certificates).
+VSCode does not allow secure connections to servers with untrusted (self-signed) SSL certificates.
 
-> To launch VScode with `code --ignore-certificate-errors`, add code to `PATH` by typing `⇧⌘P`, then `ShelC` on Mac.
+To resolve certificate validation errors:
+
+* Add the self-signed SSL certificate from the target server to root CAs on the operating system where VSCode is installed. Restart VSCode.
+
+* Start VSCode with `code --ignore-certificate-errors` command to [skip certificate validation](https://code.visualstudio.com/docs/setup/network#_ssl-certificates).
+
+  To launch VScode with `code --ignore-certificate-errors`, add code to `PATH` by typing `⇧⌘P`, then `ShelC` on Mac.
+
+  ![](./images/shelc.png)
 
 ## Syntax highlighting
 
-Theme used to create the screenshot is `Light+(default light)` (Choose theme by **File > Color theme**).
+Syntax highlighting is based on colors defined in VSCode themes. To choose a different theme, for example `Light+(default light)`, click **File > Color theme**.
 
 ![Screenshot of highlighted syntax](./images/syntax.png)
 
-## Code prettifier
+## Code Formatting
 
 ![GIF animation showing updating indents](./images/formatting.gif)
 
 ## Snippets
 
-* `{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget from Charts library
+* `{widget_name}`: creates a new `[widget]` section with a pre-configured sample widget
 * `configuration`: creates a new `[configuration]` section with child `[group]` section and several initial settings
 * `for`: creates a new `for` loop with corresponding `endfor`.
 * `if`: creates a new `if` statement with corresponding `endif`.
@@ -76,33 +97,17 @@ Theme used to create the screenshot is `Light+(default light)` (Choose theme by 
 
 ## Validation
 
-The following errors are validated by the plugin:
-
-* JS errors (syntax, undefined variables, etc.) when `axibaseCharts.validateFunctions` is `true`:
-
-  ```txt
-  script
-    widget = hello() // widget is allowed variable, since it comes from Charts
-    // hello() is unknown function, the plugin warns about it
-  endscript
-  ```
-
-  ```txt
-  [series]
-    value = 5 + ; // forgotten operand
-  ```
-
-* Dereference unknown `alias`:
+* Unknown `alias`.
 
   ```txt
   [series]
     alias = s1
 
   [series]
-    value = value('s1')
+    value = value('a1')
   ```
 
-* Unfinished `for`, `csv`, `var`, `list`, `script`, `if` blocks:
+* Incomplete `for`, `csv`, `var`, `list`, `script`, `if` blocks.
 
   ```txt
   list values = value1, value2,
@@ -110,7 +115,7 @@ The following errors are validated by the plugin:
   # no matching endlist
   ```
 
-* Incorrect `csv`:
+* Malformed `csv` definition.
 
   ```txt
   csv servers =
@@ -120,7 +125,7 @@ The following errors are validated by the plugin:
   endcsv
   ```
 
-* Unmatched `endcsv`, `endif`, `endfor`, `endvar`, `endscript`, `endlist`:
+* Unmatched tags `endcsv`, `endif`, `endfor`, `endvar`, `endscript`, `endlist`.
 
   ```txt
   var array = [
@@ -130,7 +135,7 @@ The following errors are validated by the plugin:
   # endlist can not finish var statement
   ```
 
-* Dereference of an undefined variable in `for` block:
+* Undefined variable in `for` loop.
 
   ```txt
   for server in servers
@@ -139,7 +144,7 @@ The following errors are validated by the plugin:
   endfor
   ```
 
-* Usage of an undefined collection in `for` block:
+* Undefined collection in `for` loop.
 
   ```txt
   list servers = vps, vds
@@ -149,7 +154,7 @@ The following errors are validated by the plugin:
   endfor
   ```
 
-* `else` or `elseif` statement without corresponding `if`:
+* `else` or `elseif` statement without corresponding `if`.
 
   ```txt
   for item in collection
@@ -163,7 +168,7 @@ The following errors are validated by the plugin:
   endfor
   ```
 
-* Repetition of variable:
+* Duplicate variable definition.
 
   ```txt
   list collection = value1, value2
@@ -179,7 +184,7 @@ The following errors are validated by the plugin:
   endfor
   ```
 
-* Repetition of a setting:
+* Duplicate settings.
 
   ```txt
   [series]
@@ -188,7 +193,7 @@ The following errors are validated by the plugin:
     metric = cpu_busy
   ```
 
-* Omitting of a required setting:
+* Required setting missing.
 
   ```txt
   [widget]
@@ -204,7 +209,7 @@ The following errors are validated by the plugin:
   [widget]
   ```
 
-* Misspelling in a setting name:
+* Misspelled settings.
 
   ```txt
   [wigdet]
@@ -218,7 +223,7 @@ The following errors are validated by the plugin:
     # "startime" instead of "starttime"
   ```
 
-* `for` has finished before `if`:
+* `for` has finished before `if`.
 
   ```txt
   for server in servers
@@ -232,7 +237,7 @@ The following errors are validated by the plugin:
   endif
   ```
 
-* Setting is interpreted as a tag:
+* Setting is interpreted as tag.
 
   ```txt
   [tags]
@@ -240,7 +245,21 @@ The following errors are validated by the plugin:
   time-span = 1 hour
   # time-span will be interpreted as a tag
   ```
-  
+
+* JavaScript errors if `axibaseCharts.validateFunctions` is `true`:
+
+  ```txt
+  script
+    widget = hello() // widget is allowed variable, since it comes from Charts
+    // hello() is unknown function, the plugin warns about it
+  endscript
+  ```
+
+  ```txt
+  [series]
+    value = 5 + ; // forgotten operand
+  ```
+
 ## User Defined Completions
 
 ### Snippets
@@ -249,6 +268,6 @@ The following errors are validated by the plugin:
 
   ![Snippets list screenshot](./images/snippets.png)
 
-* To add new snippets to your VSCode installation follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
+* To add new snippets, follow the official [documentation](https://code.visualstudio.com/docs/editor/userdefinedsnippets).
 
-* To add new snippets to the extension use `snippets/snippets.json` file. Pre-configured snippets can be used as examples.
+* To add new snippets to the extension use `snippets/snippets.json` file using pre-configured snippets as examples.
