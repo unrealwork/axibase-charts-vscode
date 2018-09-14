@@ -212,13 +212,23 @@ Define average distance between time values in the series<br>If the gap between 
 
 ## disconnectednodedisplay
 
+Show vertices without edge.
+
 ## disconnectinterval
+
+Defines maximum time gap between data during which points of the series line are connected.<br>If the gap between data is greater than the specified interval, a break is displayed.
 
 ## disconnectvalue
 
+Apply disconnect value in tandem with disconnect interval or count.<br> Define the value to be applied to disconnected areas.<br>Use this setting when ATSD is not collecting `null` values or those below a minimum threshold.<br>Additionally, toggle display of disconnect value with **Connect Values** on left axis mouseover menu.
+
 ## display
 
+Define a rule to display series.<br> Filter series based on metric values for widgets containing many series.
+
 ## displaydate
+
+Display the time period captured by the Time Chart.
 
 ## displayinlegend
 
@@ -227,6 +237,8 @@ Define average distance between time values in the series<br>If the gap between 
 ## displayother
 
 ## displaypanels
+
+Display control panels in the top left or right corners in Time and Bar charts.
 
 ## displaytags
 
