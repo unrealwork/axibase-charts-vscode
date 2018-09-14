@@ -6279,6 +6279,12 @@
             "example": "display: none"
         },
         {
+            "displayName": "tag",
+            "type": "string",
+            "section": "column",
+            "example": "file_system"
+        },
+        {
             "displayName": "tag-expression",
             "type": "string",
             "section": "series",
