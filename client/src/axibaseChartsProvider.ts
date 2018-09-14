@@ -25,8 +25,8 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
     public static readonly previewUri: Uri = Uri.parse("axibaseCharts://authority/axibaseCharts");
 
-    private static extensionPath(resource: string): string {
-        const extension: Extension<any> | undefined = extensions.getExtension("Axibase.axibasecharts-syntax");
+    private static extensionPath<T>(resource: string): string {
+        const extension: Extension<T> | undefined = extensions.getExtension("Axibase.axibasecharts-syntax");
         if (extension) {
             return `${extension.extensionPath}/client/${resource}`;
         }
@@ -110,7 +110,11 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     private getHtml(): string {
         const theme: string | undefined = workspace.getConfiguration("workbench")
             .get("colorTheme");
-        const applyDark: boolean = theme !== undefined && /[Bb]lack|[Dd]ark|[Nn]ight/.test(theme);
+        let darkTheme: string = "";
+        if (theme && /[Bb]lack|[Dd]ark|[Nn]ight/.test(theme)) {
+            darkTheme = `<link rel="stylesheet" type="text/css"
+            href="${AxibaseChartsProvider.extensionPath("resources/css/black.css")}">`;
+        }
 
         return `<!DOCTYPE html>
 <html>
@@ -118,8 +122,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     <link rel="stylesheet" type="text/css"
         href="${AxibaseChartsProvider.extensionPath("resources/css/jquery-ui-1.9.1.custom.min.css")}">
     <link rel="stylesheet" type="text/css" href="${this.resource("charts.min.css")}">
-    ${applyDark ?
-            `<link rel="stylesheet" type="text/css" href="${AxibaseChartsProvider.extensionPath("./resources/css/black.css")}">` : ""}
+    ${darkTheme}
 	<style>
 	  .portalPage body {
 		padding: 0;
@@ -159,7 +162,7 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         if (!this.text) {
             this.text = "";
         }
-        const address: string = (/\//.test(this.url)) ? `${this.url} / portal / resource / scripts / ` : this.url;
+        const address: string = (/\//.test(this.url)) ? `${this.url}/portal/resource/scripts/` : this.url;
         const regexp: RegExp = /(^\s*import\s+\S+\s*=\s*)(\S+)\s*$/mg;
         const urlPosition: number = 2;
         let match: RegExpExecArray | null = regexp.exec(this.text);
@@ -173,11 +176,12 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         }
     }
 
-    private resource(resource: string, isCss?: boolean, isLocal?: boolean): string {
+    private resource(resource: string, isCss?: boolean, isLocal: boolean = false): string {
         const jsPath: string = `${this.url}/${this.atsd ? "web/js/portal" : "JavaScript/portal/JavaScript"}`;
         const cssPath: string = `${this.url}/${this.atsd ? "web/css/portal" : "JavaScript/portal/CSS"}`;
         const cssType: boolean | undefined = (isCss === undefined) ? /.*[.]css$/.test(resource) : isCss;
-        const resourcePath: string = isLocal ? AxibaseChartsProvider.extensionPath(resource) : `${cssType ? cssPath : jsPath}/${resource}`;
+        const resourcePath: string =
+            isLocal ? AxibaseChartsProvider.extensionPath(resource) : `${cssType ? cssPath : jsPath}/${resource}`;
 
         return `${resourcePath}${this.atsd ? "" : `;jsessionid=${this.jsessionid}`}`;
     }
