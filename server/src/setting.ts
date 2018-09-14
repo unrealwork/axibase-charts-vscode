@@ -2,12 +2,14 @@ import { Script } from "./script";
 
 export class Setting {
     /**
-     * Lowercases the string and deletes non-alphabetic characters
+     * Lower-cases, trims the string and deletes all non-alphabetic characters
      * @param str string to be cleared
      * @returns cleared string
      */
-    public static clearSetting: (str: string) => string = (str: string): string => str.toLowerCase()
+    public static clearSetting: (str: string) => string = (str: string): string => str.trim()
+        .toLowerCase()
         .replace(/[^a-z]/g, "")
+
     public readonly defaultValue?: string | number | boolean;
     public readonly description: string = "";
     public readonly displayName: string = "";
@@ -22,8 +24,11 @@ export class Setting {
     public readonly section?: string;
     public readonly type: string = "";
 
-    public constructor(setting?: Setting) {
+    public constructor(setting?: Setting, description?: string) {
         Object.assign(this, setting);
+        if (description) {
+            this.description = description;
+        }
         this.enum = this.enum.map((v: string): string => v.toLowerCase());
         this.name = Setting.clearSetting(this.displayName);
     }

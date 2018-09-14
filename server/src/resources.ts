@@ -15,6 +15,21 @@ const readSettings: () => Setting[] = (): Setting[] => {
     return dictionary.settings;
 };
 
+const readDescriptions: () => Map<string, string> = (): Map<string, string> => {
+    const dictionaryFilePath: string = join(__dirname, "descriptions.md");
+    const fileContent: string = readFileSync(dictionaryFilePath, "UTF-8");
+    const result: Map<string, string> = new Map();
+    const regexp: RegExp = /## (.+?)\n\n(.+?)\n\n/g;
+    const match: RegExpExecArray | null = regexp.exec(fileContent);
+    while (match) {
+        const name: string = Setting.clearSetting(match[1]);
+        const description: string = match[2];
+        result.set(name, description);
+    }
+
+    return result;
+};
+
 /**
  * Tests if the provided setting complete or not
  * @param setting the setting to test
@@ -31,9 +46,12 @@ const isCompleteSetting: (setting?: Partial<Setting>) => boolean = (setting?: Pa
  */
 const createSettingsMap: () => Map<string, Setting> = (): Map<string, Setting> => {
     const map: Map<string, Setting> = new Map();
-    for (const setting of readSettings()) {
+    const meta: Setting[] = readSettings();
+    const descriptions: Map<string, string> = readDescriptions();
+    for (const setting of meta) {
         if (isCompleteSetting(setting)) {
-            const completeSetting: Setting = new Setting(setting);
+            const description: string | undefined = descriptions.get(setting.name);
+            const completeSetting: Setting = new Setting(setting, description);
             map.set(completeSetting.name, completeSetting);
         }
     }

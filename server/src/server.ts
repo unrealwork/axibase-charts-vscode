@@ -1,11 +1,12 @@
 import {
     ClientCapabilities, CompletionItem, CompletionParams, createConnection, Diagnostic,
     DidChangeConfigurationNotification, DidChangeConfigurationParams,
-    DocumentFormattingParams, IConnection, InitializeParams, ProposedFeatures,
-    TextDocument, TextDocumentChangeEvent, TextDocuments, TextEdit,
+    DocumentFormattingParams, Hover, IConnection, InitializeParams,
+    ProposedFeatures, TextDocument, TextDocumentChangeEvent, TextDocumentPositionParams, TextDocuments, TextEdit,
 } from "vscode-languageserver";
 import { CompletionProvider } from "./completionProvider";
 import { Formatter } from "./formatter";
+import { provideHover } from "./infoProvider";
 import { JsDomCaller } from "./jsDomCaller";
 import { Validator } from "./validator";
 
@@ -29,6 +30,7 @@ connection.onInitialize((params: InitializeParams) => {
         capabilities: {
             completionProvider: { resolveProvider: true },
             documentFormattingProvider: true,
+            hoverProvider: true,
             textDocumentSync: documents.syncKind,
         },
     };
@@ -65,6 +67,15 @@ connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
     // Revalidate all open text documents
     documents.all()
         .forEach(validateTextDocument);
+});
+
+connection.onHover((request: TextDocumentPositionParams): Hover | undefined => {
+    const document: TextDocument | undefined = documents.get(request.textDocument.uri);
+    if (!document) {
+        return undefined;
+    }
+
+    return provideHover(document, request.position);
 });
 
 const getDocumentSettings: (resource: string) => Thenable<IServerSettings> =
