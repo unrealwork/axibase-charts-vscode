@@ -6237,6 +6237,7 @@
         {
             "displayName": "style",
             "type": "string",
+            "multiLine": true,
             "example": "stroke-width: 4; color: green"
         },
         {
