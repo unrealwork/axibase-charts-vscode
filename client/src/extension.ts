@@ -19,6 +19,10 @@ const errorMessage: string = "Configure connection properties in VSCode > Prefer
     " search settings for 'axibase', and enter the requested connection properties.";
 let client: LanguageClient;
 
+/**
+ * Activates the extension
+ * @param context the context of the extension
+ */
 export const activate: (context: ExtensionContext) => void = async (context: ExtensionContext): Promise<void> => {
 
     // The server is implemented in node
@@ -109,6 +113,9 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     );
 };
 
+/**
+ * Deactivates the extension
+ */
 export const deactivate: () => Thenable<void> = (): Thenable<void> => {
     if (!client) {
         return Promise.resolve();
@@ -117,10 +124,17 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
     return client.stop();
 };
 
+/**
+ * Ensures the provided URL is valid
+ * @param url the URL to be validated
+ */
 const validateUrl: (url: string) => boolean = (url: string): boolean =>
     urlRegex({ exact: true, strict: true })
         .test(url);
 
+/**
+ * Constructs connection details based on the extension configuration and an input box
+ */
 const constructConnection: () => Promise<IConnectionDetails> = async (): Promise<IConnectionDetails> => {
     const config: WorkspaceConfiguration = workspace.getConfiguration(configSection);
     const protocol: string | undefined = config.get("protocol");
@@ -172,6 +186,13 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
 
     return { url, cookie, atsd };
 };
+
+/**
+ * Gets the cookies for a user from the server and tests if it ATSD or not
+ * @param address the target server's URL address
+ * @param username the target user's username
+ * @param password the target user's password
+ */
 const performRequest: (address: string, username: string, password: string) => Promise<[string[], boolean]> =
     async (address: string, username: string, password: string): Promise<[string[], boolean]> => {
         const url: URL = new URL(address);

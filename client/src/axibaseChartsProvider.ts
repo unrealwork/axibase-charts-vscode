@@ -10,6 +10,9 @@ export interface IConnectionDetails {
 }
 
 export class AxibaseChartsProvider implements TextDocumentContentProvider {
+    /**
+     * Sets the working document and fires update() event
+     */
     public set document(document: TextDocument) {
         this.innerDocument = document;
         this.update();
@@ -25,6 +28,10 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
 
     public static readonly previewUri: Uri = Uri.parse("axibaseCharts://authority/axibaseCharts");
 
+    /**
+     * Generates the path to a resource on the local filesystem
+     * @param resource path to a resource
+     */
     private static extensionPath<T>(resource: string): string {
         const extension: Extension<T> | undefined = extensions.getExtension("Axibase.axibasecharts-syntax");
         if (extension) {
@@ -51,6 +58,10 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         this.atsd = details.atsd;
     }
 
+    /**
+     * Applies the new settings to the current preview
+     * @param details new settings
+     */
     public changeSettings(details: IConnectionDetails): void {
         this.url = details.url;
         if (details.cookie) {
@@ -61,6 +72,9 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         this.update();
     }
 
+    /**
+     * Provides html code to preview the configuration
+     */
     public async provideTextDocumentContent(): Promise<string> {
         if (this.innerDocument.languageId !== languageId) {
             return Promise.reject();
@@ -75,10 +89,16 @@ export class AxibaseChartsProvider implements TextDocumentContentProvider {
         return html;
     }
 
+    /**
+     * Fires onDidChange to inform all listeners
+     */
     public update(): void {
         this.onDidChangeEmitter.fire(AxibaseChartsProvider.previewUri);
     }
 
+    /**
+     * Adds `url = ...` to the configuration
+     */
     private addUrl(): void {
         if (!this.text) {
             this.text = "[configuration]";
@@ -98,6 +118,10 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         }
     }
 
+    /**
+     * Trims, lower-cases and removes an extra '/' symbol
+     * For example, `https://axiBase.com/ ` becomes `https://axibase.com`
+     */
     private clearUrl(): void {
         this.url = this.url.trim()
             .toLowerCase();
@@ -107,6 +131,9 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         }
     }
 
+    /**
+     * Creates the html from a configuration of a portal
+     */
     private getHtml(): string {
         const theme: string | undefined = workspace.getConfiguration("workbench")
             .get("colorTheme");
@@ -158,6 +185,11 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     </html>`;
     }
 
+    /**
+     * Adds the ATSD URL to the import statements
+     * For example, `import fred = fred.js` becomes
+     * `import fred = https://nur.axibase.com/portal/resource/scripts/fred.js`
+     */
     private replaceImports(): void {
         if (!this.text) {
             this.text = "";
@@ -176,6 +208,12 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         }
     }
 
+    /**
+     * Generates the path to a resource.
+     * @param resource name of a static resource
+     * @param isCss is this resource CSS file. If is not specified, the decides based on the file extension
+     * @param isLocal should this resource be downloaded from the target server
+     */
     private resource(resource: string, isCss?: boolean, isLocal: boolean = false): string {
         const jsPath: string = `${this.url}/${this.atsd ? "web/js/portal" : "JavaScript/portal/JavaScript"}`;
         const cssPath: string = `${this.url}/${this.atsd ? "web/css/portal" : "JavaScript/portal/CSS"}`;
@@ -187,6 +225,11 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
     }
 }
 
+/**
+ * Replaces all comments with spaces
+ * @param text the text to replace comments
+ * @returns the modified text
+ */
 const deleteComments: (text: string) => string = (text: string): string => {
     let content: string = text;
     const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
