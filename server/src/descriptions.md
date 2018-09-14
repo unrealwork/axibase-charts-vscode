@@ -118,29 +118,53 @@ Retrieve the most recent value from the HBase **Last Insert** table.<br>This set
 
 ## caption
 
+Text displayed on top of the gauge.<br> Caption can be split into multiple lines.<br>HTML markup is supported.
+
 ## captionstyle
+
+CSS style applied to caption.
 
 ## case
 
+Define case for column headers.
+
 ## centralizecolumns
+
+Position columns between ticks instead of directly above ticks.
 
 ## centralizeticks
 
+Position time and date markers between instead of under ticks.
+
 ## changefield
+
+Widget setting changed upon drop-down list selection. To update the widget subsection setting, use `{section-name}.{setting-name}` syntax. For example, `series.entity` or `keys.mq_manager_name`.
 
 ## circle
 
+Displays background circle.
+
 ## class
+
+Apply Unix style with black background.
 
 ## collapsible
 
 ## color
 
+Assign a color to the series.
+
 ## colorrange
+
+Color palette automatically assigned to threshold ranges.
 
 ## colors
 
+Redefine default palette.<br>Table, Console, Property, Text, and Page widgets do not support this setting.<br>Default palette is defined by the array `window.defaultColors`.
+
 ## contextheight
+
+Define the height of the context graph. Used to adjust the displayed timespan.<br>`0` by default for the widget in the main window.<br>`70` by default for the widget in the dialog window.
 
 ## contextpath
 
@@ -148,13 +172,23 @@ Retrieve the most recent value from the HBase **Last Insert** table.<br>This set
 
 ## counterposition
 
+Counter position.
+
 ## currentperiodstyle
+
+Apply CSS styles to values of the current period, such as the most recent hour, day, or week, in `column` and `column-stack` mode.
 
 ## data
 
+Information about the last time series value next to the image of the corresponding vertex.
+
 ## datatype
 
+Define current series data type.
+
 ## dayformat
+
+Format `x` axis timestamps using Format Syntax.
 
 ## defaultcolor
 
@@ -162,13 +196,19 @@ Retrieve the most recent value from the HBase **Last Insert** table.<br>This set
 
 ## depth
 
+Depth of the displayed vertex hierarchy from `1` to the maximum depth of the vertex hierarchy plus `1`<br>Final level corresponds to edges<br>Maximum depth of the hierarchy is default.
+
 ## description
 
 ## dialogmaximize
 
 ## disablealert
 
+Cancel alerts raised by the loaded page.
+
 ## disconnectcount
+
+Define average distance between time values in the series<br>If the gap between data is greater than the defined value,a break is displayed.<br>If `disconnect-count = 1`, the disconnect interval is equal to the mean interval.<br>See Disconnect Count Behavior for more information.
 
 ## disconnectednodedisplay
 
