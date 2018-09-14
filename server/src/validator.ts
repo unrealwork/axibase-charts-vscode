@@ -995,13 +995,15 @@ export class Validator {
                 throw new Error(`${setting.type} is not handled`);
             }
         }
+        const enumList: string | undefined = (setting.type !== "enum") ? undefined : setting.enum.join(";\n")
+            .replace("\\d\+", "{num}");
         this.result.push(createDiagnostic(
             Range.create(
                 this.currentLineNumber, this.match[1].length,
                 this.currentLineNumber, this.match[1].length + this.match[2].length,
             ),
             DiagnosticSeverity.Error, (setting.type === "enum") ?
-                `${settingValue} must be one of ${setting.enum.join(", ")}` :
+                `${this.match[2]} must be one of:\n${enumList}` :
                 `${this.match[2]} type is ${setting.type}`,
         ));
 

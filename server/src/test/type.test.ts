@@ -172,19 +172,19 @@ suite("Type check tests", () => {
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  bottom-axis".length),
-                    DiagnosticSeverity.Error, "percentile must be one of none, percentiles, values",
+                    DiagnosticSeverity.Error, "bottom-axis must be one of:\nnone;\npercentiles;\nvalues",
                 ),
                 createDiagnostic(
                     Range.create(2, "  ".length, 2, "  buttons".length),
-                    DiagnosticSeverity.Error, "updat must be one of menu, update",
+                    DiagnosticSeverity.Error, "buttons must be one of:\nmenu;\nupdate",
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  case".length),
-                    DiagnosticSeverity.Error, "uppe must be one of upper, lower",
+                    DiagnosticSeverity.Error, "case must be one of:\nupper;\nlower",
                 ),
                 createDiagnostic(
                     Range.create(4, "  ".length, 4, "  counter-position".length),
-                    DiagnosticSeverity.Error, "to must be one of none, top, bottom",
+                    DiagnosticSeverity.Error, "counter-position must be one of:\nnone;\ntop;\nbottom",
                 ),
             ],
         ),
