@@ -163,8 +163,37 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
 	<script src="${this.resource("charts.min.js")}"></script>
 	<script src="${this.extensionPath("resources/js/highlight.pack.js")}"></script>
 	<script>
-	    window.initChart = function f() {
-	      $.get('${this.url}/api/v1/ping;jsessionid=${this.jsessionid}', onBodyLoad);
+	    window.initChart = function () {
+	      $.get('${this.url}/api/v1/ping${this.jsessionid ? `;jsessionid=${this.jsessionid}` : ""}', function (){
+            if (onBodyLoad) {
+                onBodyLoad();
+            } else {
+                var $body = $('body');
+                $body.empty()
+                .append('<h3>Corrupted charts.js files</h3>');
+            }
+            })
+	       .fail(function(err){
+	           console.log(err);
+	           var $body = $('body');
+	           if (err.status === 0) {
+                  $body.empty();
+	              $body.append('<h3>SSL Certificate Error during connection to ${this.url}</h3>')
+	              .append('<p>Restart VSCode with <code>--ignore-certificate-errors</code> ' +
+	               'flag or add the self-signed certificate to root CAs. ' +
+	               'See <a href="https://github.com/axibase/axibase-charts-vscode#ssl-certificates">' +
+	                'href="https://github.com/axibase/axibase-charts-vscode#ssl-certificates</a> ' +
+	                 'for more information.</p>');
+	           } else {
+	               if (onBodyLoad) {
+	                    onBodyLoad();
+	               } else {
+	                   $body.empty();
+	                   $body.append('<h3> Unexpected error: </h3>')
+	                   .append('<code>'+JSON.stringify(err, null, 2)+'</code>')
+	               }
+	           }
+	       });
 	    }
 	</script>
     </head>
