@@ -242,29 +242,53 @@ Display control panels in the top left or right corners in Time and Bar charts.
 
 ## displaytags
 
+Display a separate column for each tag in the underlying series.
+
 ## displayticks
+
+Display ticks on the axis.
 
 ## displaytip
 
+Display last value marker.
+
 ## displaytotal
+
+Displays the sum of rectangle sizes such as `size` setting for series.
 
 ## displayvalues
 
+Show or hide bar total values.
+
 ## downsample
+
+Enable [downsampling](https://axibase.com/docs/atsd/api/data/series/downsample.html#downsampling) for the current chart configuration.
 
 ## downsamplealgorithm
 
+Define [downsample algorithm](https://axibase.com/docs/atsd/api/data/series/downsample.html#algorithm) used for calculation.
+
 ## downsampledifference
+
+Define deviation between consecutive values which the database considers equivalent.<br>Use this setting to include minor deviations in downsampling.
 
 ## downsampleratio
 
+Define downsample [ratio](https://axibase.com/docs/atsd/api/data/series/downsample.html#ratio-check).
+
 ## downsamplegap
+
+Control the occurrence of repeated values by defining the gap using time interval.<br>A larger gap value decreases the occurrence of repeated values.
 
 ## downsampleorder
 
 ## duration
 
+The duration of a transaction when changing the geometry of the graph in milliseconds.
+
 ## effects
+
+Animation when changing the geometry of the graph.
 
 ## emptyrefreshinterval
 
@@ -272,7 +296,11 @@ Display control panels in the top left or right corners in Time and Bar charts.
 
 ## enabled
 
+Hide series in the widget legend based on expression or boolean statement.
+
 ## endtime
+
+Specifies the date and time in local or [ISO format](https://axibase.com/docs/atsd/shared/date-format.html) until which the values for the series are loaded.<br>The setting can be overridden by each widget separately.<br>Note that `start-time` is **inclusive** and `end-time` is **exclusive**.<br>This means that `start-time = 2017-09-14 10:00:00` includes data points that occurred exactly at `10:00:00` and later whereas `end-time = 2017-09-14 11:00:00` includes data points that occurred up to `10:59:59`, excluding points that occurred at `11:00:00`.<br>The setting supports [calendar](https://axibase.com/docs/atsd/shared/calendar.html) keywords.
 
 ## endworkingminutes
 
