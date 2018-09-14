@@ -1,4 +1,12 @@
-.vscode/**
-.vscode-test/**
+**/.vscode/**
+**/.vscode-test/**
 .gitignore
 server/out/test/**
+**/*.ts
+**/tsconfig.json
+tsconfig.base.json
+tslint.json
+examples
+travis.yml
+.markdownlint.json
+.git
