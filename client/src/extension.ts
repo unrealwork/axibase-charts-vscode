@@ -1,4 +1,4 @@
-import { ClientRequest, IncomingMessage, OutgoingMessage, request as http } from "http";
+import { ClientRequest, IncomingMessage, OutgoingHttpHeaders, OutgoingMessage, request as http } from "http";
 import { request as https, RequestOptions } from "https";
 import { join } from "path";
 import { URL } from "url";
@@ -29,19 +29,19 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // The server is implemented in node
     const serverModule: string = context.asAbsolutePath(join("server", "out", "server.js"));
     // The debug options for the server
-    const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
+    const debugOptions: ForkOptions = {execArgv: ["--nolazy", "--inspect=6009"]};
 
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        debug: { module: serverModule, options: debugOptions, transport: TransportKind.ipc },
-        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: {module: serverModule, options: debugOptions, transport: TransportKind.ipc},
+        run: {module: serverModule, transport: TransportKind.ipc},
     };
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{ language: languageId, scheme: "file" }],
+        documentSelector: [{language: languageId, scheme: "file"}],
         outputChannelName: "Axibase Charts",
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
@@ -130,7 +130,7 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
  * @param url the URL to be validated
  */
 const validateUrl: (url: string) => boolean = (url: string): boolean =>
-    urlRegex({ exact: true, strict: true })
+    urlRegex({exact: true, strict: true})
         .test(url);
 
 /**
@@ -172,20 +172,18 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
 
     let cookie: string[] | undefined;
     let atsd: boolean | undefined;
-    if (password && username) {
-        try {
-            [cookie, atsd] = await performRequest(url, username, password);
-        } catch (err) {
-            const error: Error = err as Error;
-            window.showErrorMessage(error.toString());
+    try {
+        [cookie, atsd] = await performRequest(url, username, password);
+    } catch (err) {
+        const error: Error = err as Error;
+        window.showErrorMessage(error.toString());
 
-            return Promise.reject(error);
-        }
-        window.showInformationMessage(`Connected to ${address}:${port} as ${username}`);
+        return Promise.reject(error);
     }
+    window.showInformationMessage(`Connected to ${address}:${port} ${username ? `as ${username}` : ""}`);
     atsd = atsd === undefined ? true : atsd;
 
-    return { url, cookie, atsd };
+    return {url, cookie, atsd};
 };
 
 /**
@@ -194,22 +192,26 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
  * @param username the target user's username
  * @param password the target user's password
  */
-const performRequest: (address: string, username: string, password: string) => Promise<[string[], boolean]> =
-    async (address: string, username: string, password: string): Promise<[string[], boolean]> => {
+const performRequest: (address: string, username?: string, password?: string) => Promise<[string[], boolean]> =
+    async (address: string, username?: string, password?: string): Promise<[string[], boolean]> => {
         const url: URL = new URL(address);
+        const headers: OutgoingHttpHeaders = (username && password) ? {
+            "Authorization": `Basic ${new Buffer(`${username}:${password}`).toString("base64")}`,
+            "user-agent": userAgent,
+        } : {
+            "user-agent": userAgent,
+        };
+
         const options: RequestOptions = {
-            headers: {
-                "Authorization": `Basic ${new Buffer(`${username}:${password}`).toString("base64")}`,
-                "user-agent": userAgent,
-            },
             hostname: url.hostname,
             method: "GET",
-            path: "/api/v1/ping",
+            path: (username && password) ? "/api/v1/ping" : "",
             port: url.port,
             protocol: url.protocol,
             rejectUnauthorized: false, // allows self-signed certificates
             timeout: 3000, // milliseconds (3 s)
         };
+        options.headers = headers;
         const request: (options: RequestOptions | string | URL, callback?: (res: IncomingMessage) => void)
             => ClientRequest = (url.protocol === "https:") ? https : http;
 
@@ -218,7 +220,10 @@ const performRequest: (address: string, username: string, password: string) => P
                 const outgoing: OutgoingMessage = request(options, (res: IncomingMessage) => {
                     res.on("error", reject);
                     if (res.statusCode !== 200) {
-                        return reject(new Error(`Login failed with status code ${res.statusCode}`));
+                        return reject(new Error(`;
+    Login;
+    failed;
+    with status code ${res.statusCode}`));
                     }
                     const cookies: string[] | undefined = res.headers["set-cookie"];
                     if (!cookies || cookies.length < 1) {
