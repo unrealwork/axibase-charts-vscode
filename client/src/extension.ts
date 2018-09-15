@@ -1,4 +1,10 @@
-import { ClientRequest, IncomingMessage, OutgoingHttpHeaders, OutgoingMessage, request as http } from "http";
+import {
+    ClientRequest,
+    IncomingMessage,
+    OutgoingHttpHeaders,
+    OutgoingMessage,
+    request as http,
+    } from "http";
 import { request as https, RequestOptions } from "https";
 import { join } from "path";
 import { URL } from "url";
@@ -12,7 +18,7 @@ import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
 } from "vscode-languageclient";
 import { AxibaseChartsProvider, IConnectionDetails } from "./axibaseChartsProvider";
-import { userAgent } from "./util";
+import { statusFamily, StatusFamily, userAgent } from "./util";
 
 const configSection: string = "axibaseCharts";
 export const languageId: string = "axibasecharts";
@@ -219,11 +225,16 @@ const performRequest: (address: string, username?: string, password?: string) =>
             (resolve: (result: [string[], boolean]) => void, reject: (err: Error) => void): void => {
                 const outgoing: OutgoingMessage = request(options, (res: IncomingMessage) => {
                     res.on("error", reject);
-                    if (res.statusCode !== 200) {
-                        return reject(new Error(`;
+                    const family: StatusFamily = statusFamily(res.statusCode);
+                    if (family === StatusFamily.CLIENT_ERROR || family === StatusFamily.SERVER_ERROR) {
+                        if (res.statusCode === 401) {
+                            return reject(new Error(`;
     Login;
     failed;
     with status code ${res.statusCode}`));
+                        } else {
+                            return reject(new Error(`Unexpected Response Code ${res.statusCode}`));
+                        }
                     }
                     const cookies: string[] | undefined = res.headers["set-cookie"];
                     if (!cookies || cookies.length < 1) {
@@ -235,7 +246,7 @@ const performRequest: (address: string, username?: string, password?: string) =>
                         atsd = false;
                     } else {
                         const lowerCased: string = server.toLowerCase();
-                        atsd = lowerCased.includes("atsd") ? true : false;
+                        atsd = lowerCased.includes("atsd");
                     }
                     resolve([cookies, atsd]);
                 });
