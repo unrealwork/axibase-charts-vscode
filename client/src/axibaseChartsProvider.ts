@@ -213,6 +213,8 @@ ${this.text.substr(match.index + match[0].length + 1)}`;
         if (details.cookie) {
             this.jsessionid = details.cookie[0].split(";")[0]
                 .split("=")[1];
+        } else {
+            this.jsessionid = undefined;
         }
         this.atsd = details.atsd;
     }
