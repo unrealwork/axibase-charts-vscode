@@ -164,6 +164,23 @@ suite("Incorrect dealias tests", () => {
                 DiagnosticSeverity.Error, errorMessage("sc", "src"),
             )],
         ),
+        new Test(
+            "Two de-aliases per string without spaces",
+            `[series]
+  entity = @{server}
+  metric = cpu_busy
+  alias = avail_cpu_pool
+
+[series]
+  entity = @{server}
+  metric = cpu_busy
+  alias = cpu_total
+
+[series]
+  entity = @{server}
+  value = (value('avail_cpu_pool')*100)/(value('cpu_total'))`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
