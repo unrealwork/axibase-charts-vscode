@@ -1,6 +1,6 @@
 import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
-import { calendarRegExp, localDateRegExp, settingsMap, zonedDateRegExp } from "./resources";
+import { settingsMap } from "./resources";
 import { Setting } from "./setting";
 
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
@@ -178,14 +178,6 @@ export const deleteScripts: (text: string) => string = (text: string): string =>
     text.replace(/\bscript\b([\s\S]+?)\bendscript\b/g, "script\nendscript");
 
 /**
- * Tests the provided string with regular expressions
- * @param text the target string
- * @returns true if the string is date expression, false otherwise
- */
-export const isDate: (text: string) => boolean = (text: string): boolean =>
-    calendarRegExp.test(text) || localDateRegExp.test(text) || zonedDateRegExp.test(text);
-
-/**
  * Adds to the array display names of all present settings
  * @param array the target array
  * @returns array containing both source array content and display names
@@ -245,4 +237,26 @@ colors = red, yellow, green`;
         }
 
         return createDiagnostic(range, diagnosticSeverity, message);
+    };
+
+export const typeDiagnostic: (setting: Setting, range: Range, name: string, value: string) => Diagnostic =
+    (setting: Setting, range: Range, name: string, value: string): Diagnostic => {
+
+        const enumList: string | undefined = (setting.type !== "enum") ? undefined : setting.enum.join(";\n")
+            .replace("\\d\+", "{num}");
+        let msg: string;
+        let ds: DiagnosticSeverity = DiagnosticSeverity.Error;
+        if (setting.type === "enum") {
+            msg = `${name} must be one of:\n${enumList}`;
+        } else {
+            if ((setting.name === "updateinterval") && (/^\d+$/.test(value))) {
+                msg = `Specifying the interval in seconds is deprecated.
+Use \`count unit\` format, for example: \`5 minute\`.`;
+                ds = DiagnosticSeverity.Warning;
+            } else {
+                msg = `${name} type is ${setting.type}`;
+            }
+        }
+
+        return createDiagnostic(range, ds, msg);
     };
