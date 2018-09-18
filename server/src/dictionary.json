@@ -5202,7 +5202,7 @@
             "example": "inside",
             "defaultValue": "none",
             "script": {
-                "returnValue": "interval",
+                "returnValue": "string",
                 "fields": [
                     {
                         "name": "metric",
