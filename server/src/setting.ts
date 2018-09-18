@@ -135,7 +135,7 @@ export class Setting {
                 const index: number = this.enum.findIndex((option: string): boolean =>
                     new RegExp(`^${option}$`, "i").test(value),
                 );
-                if (index <= 0) {
+                if (index < 0) {
                     const enumList: string = this.enum.join(";\n")
                         .replace("\\d\+", "{num}");
                     result = createDiagnostic(
