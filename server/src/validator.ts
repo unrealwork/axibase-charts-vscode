@@ -1,13 +1,10 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import {
-    booleanRegExp, integerRegExp, intervalRegExp, numberRegExp, parentSections, possibleSections,
-    requiredSectionSettingsMap,
-} from "./resources";
+import { parentSections, possibleSections, requiredSectionSettingsMap } from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
 import {
     addDisplayNames, countCsvColumns, createDiagnostic, deleteComments, getSetting,
-    isAnyInArray, isDate, isInMap, mapToArray, repetitionDiagnostic, suggestionMessage,
+    isAnyInArray, isInMap, mapToArray, repetitionDiagnostic, suggestionMessage,
 } from "./util";
 
 export class Validator {
@@ -33,6 +30,7 @@ export class Validator {
     private readonly variables: Map<string, string[]> = new Map([
         ["freemarker", ["entity", "entities", "type"]],
     ]);
+    private currentWidget: string | undefined;
 
     public constructor(text: string) {
         this.lines = deleteComments(text)
@@ -826,6 +824,10 @@ export class Validator {
                 }
             }
 
+            if (setting.name === "type") {
+                this.currentWidget = this.match[3];
+            }
+
             if (!setting.multiLine) {
                 this.checkRepetition(setting);
             }
@@ -959,82 +961,16 @@ export class Validator {
         if (!this.match) {
             return;
         }
-        const settingValue: string = this.match[3];
-        switch (setting.type) {
-            // tslint:disable-next-line:no-null-keyword
-            case null:
-            case undefined: return;
-            case "string": {
-                if (settingValue.length !== 0) {
-                    return;
-                }
-                break;
-            }
-            case "number": {
-                if (numberRegExp.test(settingValue)) {
-                    return;
-                }
-                break;
-            }
-            case "integer": {
-                if (integerRegExp.test(settingValue)) {
-                    return;
-                }
-                break;
-            }
-            case "boolean": {
-                if (booleanRegExp.test(settingValue)) {
-                    return;
-                }
-                break;
-            }
-            case "enum": {
-                const index: number = setting.enum.findIndex((option: string): boolean =>
-                    new RegExp(`^${option}$`, "i").test(settingValue),
-                );
-                if (index >= 0) {
-                    return;
-                }
-
-                break;
-            }
-            case "interval": {
-                if (intervalRegExp.test(settingValue)) {
-                    return;
-                }
-                break;
-            }
-            case "date": {
-                if (isDate(settingValue)) {
-                    return;
-                }
-                break;
-            }
-            default: {
-                throw new Error(`${setting.type} is not handled`);
-            }
+        const range: Range = Range.create(
+            this.currentLineNumber, this.match[1].length,
+            this.currentLineNumber, this.match[1].length + this.match[2].length,
+        );
+        const diagnostic: Diagnostic | undefined = setting.checkType(
+            this.match[3], range, this.match[2], this.currentWidget,
+        );
+        if (diagnostic) {
+            this.result.push(diagnostic);
         }
-        const enumList: string | undefined = (setting.type !== "enum") ? undefined : setting.enum.join(";\n")
-            .replace("\\d\+", "{num}");
-        let msg: string;
-        let ds: DiagnosticSeverity = DiagnosticSeverity.Error;
-        if (setting.type === "enum") {
-            msg = `${this.match[2]} must be one of:\n${enumList}`;
-        } else {
-            if ((setting.name === "updateinterval") && (/^\d+$/.test(settingValue))) {
-                msg = "Specifying the interval in seconds is deprecated.\n" +
-                    "Use `count unit` format, for example: `5 minute`.";
-                ds = DiagnosticSeverity.Warning;
-            } else {
-                msg = `${this.match[2]} type is ${setting.type}`;
-            }
-        }
-
-        this.result.push(createDiagnostic(
-            Range.create(
-                this.currentLineNumber, this.match[1].length,
-                this.currentLineNumber, this.match[1].length + this.match[2].length,
-            ), ds, msg));
     }
 
     /**
