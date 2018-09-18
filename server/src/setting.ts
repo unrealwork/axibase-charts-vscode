@@ -61,6 +61,8 @@ export class Setting {
         "(?:[zZ]|[+-](?:[01]\\d|2[0-4]):?(?:[0-5][0-9]))$",
     );
 
+    private static readonly calculatedRegExp: RegExp = /[@$]\{.+\}/;
+
     /**
      * Tests the provided string with regular expressions
      * @param text the target string
@@ -97,6 +99,10 @@ export class Setting {
      */
     public checkType(value: string, range: Range, name: string, _widget?: string): Diagnostic | undefined {
         let result: Diagnostic | undefined;
+        // allows ${} and @{} expressions
+        if (Setting.calculatedRegExp.test(value)) {
+            return result;
+        }
         switch (this.type) {
             case "string": {
                 if (value.length === 0) {
