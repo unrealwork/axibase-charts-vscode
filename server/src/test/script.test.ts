@@ -105,7 +105,7 @@ endscript`,
         ),
         new Test(
             "Handle '\\r' character properly",
-            "script = if (!config.isDialog) c = widget",
+            "script = if (!config.isDialog) c = widget\r\n",
             [],
         ),
     ];
