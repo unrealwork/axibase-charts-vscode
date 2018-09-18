@@ -722,9 +722,7 @@
             "type": "enum",
             "example": "terminal",
             "enum": [
-                "terminal",
-                "metro",
-                "detailWidget"
+                "terminal"
             ],
             "section": "widget"
         },
@@ -2387,14 +2385,6 @@
             "widget": "gauge"
         },
         {
-            "displayName": "group",
-            "section": "widget",
-            "widget": "bar",
-            "type": "string",
-            "example": "region",
-            "defaultValue": "metric"
-        },
-        {
             "displayName": "group-first",
             "type": "boolean",
             "example": false,
@@ -2785,8 +2775,7 @@
             "displayName": "label",
             "type": "string",
             "example": "CPU Busy - nurswgvml007",
-            "section": "series",
-            "multiLine": true
+            "section": "series"
         },
         {
             "displayName": "label-format",
@@ -4964,11 +4953,6 @@
             "section": "series"
         },
         {
-            "displayName": "reload",
-            "type": "boolean",
-            "example": true
-        },
-        {
             "displayName": "replace-underscore",
             "section": "widget",
             "type": "boolean",
@@ -6078,11 +6062,6 @@
             "defaultValue": false
         },
         {
-            "displayName": "single-entity",
-            "type": "boolean",
-            "example": true
-        },
-        {
             "displayName": "size",
             "type": "string",
             "defaultValue": "1",
@@ -6596,7 +6575,6 @@
             "example": "avg",
             "section": "series",
             "enum": [
-                "detail",
                 "count",
                 "min",
                 "max",
@@ -7195,8 +7173,7 @@
         {
             "displayName": "tooltip",
             "type": "string",
-            "example": "NURSWGVML007",
-            "multiLine": true
+            "example": "NURSWGVML007"
         },
         {
             "displayName": "top-axis",
@@ -7213,7 +7190,7 @@
         },
         {
             "displayName": "top-units",
-            "type": "number",
+            "type": "integer",
             "section": "widget",
             "example": 1
         },
