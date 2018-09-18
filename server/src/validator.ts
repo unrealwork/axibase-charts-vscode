@@ -189,7 +189,7 @@ export class Validator {
     private addToStringMap(map: Map<string, string[]>, key: string): Map<string, string[]> {
         if (!map || !key || !this.match) { return map; }
         const variable: string = this.match[2];
-        if (isInMap(variable, map)) {
+        if (isInMap(variable, map) && key !== "freemarker") {
             const startPosition: number = this.match.index + this.match[1].length;
             this.result.push(createDiagnostic(
                 Range.create(
