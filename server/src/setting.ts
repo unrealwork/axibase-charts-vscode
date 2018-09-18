@@ -95,7 +95,7 @@ export class Setting {
      * @param range where the error should be displayed
      * @param name name of the setting which is used by user
      */
-    public checkType(value: string, range: Range, name: string, widget?: string): Diagnostic | undefined {
+    public checkType(value: string, range: Range, name: string, _widget?: string): Diagnostic | undefined {
         let result: Diagnostic | undefined;
         switch (this.type) {
             case "string": {
@@ -163,7 +163,7 @@ Use \`count unit\` format, for example: \`5 minute\`.`,
                 break;
             }
             case "date": {
-                if (Setting.isDate(value)) {
+                if (!Setting.isDate(value)) {
                     result = createDiagnostic(
                         range, DiagnosticSeverity.Error,
                         `${name} should be a date. For example, ${this.example}`,
