@@ -103,6 +103,11 @@ endscript`,
                 DiagnosticSeverity.Error, "A linefeed character after 'script' keyword is required",
             )],
         ),
+        new Test(
+            "Handle '\\r' character properly",
+            "script = if (!config.isDialog) c = widget\r\n",
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
