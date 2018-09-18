@@ -31,7 +31,7 @@ export class Validator {
     private settingValues: Map<string, string> = new Map<string, string>();
     private urlParameters: string[] | undefined;
     private readonly variables: Map<string, string[]> = new Map([
-        ["freemarker", ["entity", "entities"]],
+        ["freemarker", ["entity", "entities", "type"]],
     ]);
 
     public constructor(text: string) {
