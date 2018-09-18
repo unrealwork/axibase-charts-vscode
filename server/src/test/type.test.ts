@@ -46,15 +46,15 @@ suite("Type check tests", () => {
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  add-meta".length),
-                    DiagnosticSeverity.Error, "add-meta type is boolean",
+                    DiagnosticSeverity.Error, "add-meta should be a boolean value. For example, true",
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  add-meta".length),
-                    DiagnosticSeverity.Error, "add-meta type is boolean",
+                    DiagnosticSeverity.Error, "add-meta should be a boolean value. For example, true",
                 ),
                 createDiagnostic(
                     Range.create(5, "  ".length, 5, "  add-meta".length),
-                    DiagnosticSeverity.Error, "add-meta type is boolean",
+                    DiagnosticSeverity.Error, "add-meta should be a boolean value. For example, true",
                 ),
             ],
         ),
@@ -107,47 +107,47 @@ suite("Type check tests", () => {
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(5, "  ".length, 5, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(7, "  ".length, 7, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(9, "  ".length, 9, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(11, "  ".length, 11, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(13, "  ".length, 13, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(15, "  ".length, 15, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(17, "  ".length, 17, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(19, "  ".length, 19, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
                 createDiagnostic(
                     Range.create(21, "  ".length, 21, "  arrow-length".length),
-                    DiagnosticSeverity.Error, "arrow-length type is number",
+                    DiagnosticSeverity.Error, "arrow-length should be a real (floating-point) number. For example, 0.3",
                 ),
             ],
         ),
@@ -279,87 +279,87 @@ suite("Type check tests", () => {
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(5, "  ".length, 5, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(7, "  ".length, 7, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(9, "  ".length, 9, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(11, "  ".length, 11, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(13, "  ".length, 13, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(15, "  ".length, 15, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(17, "  ".length, 17, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(19, "  ".length, 19, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(21, "  ".length, 21, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(23, "  ".length, 23, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(25, "  ".length, 25, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(27, "  ".length, 27, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(29, "  ".length, 29, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(31, "  ".length, 31, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(33, "  ".length, 33, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(35, "  ".length, 35, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(37, "  ".length, 37, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(39, "  ".length, 39, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
                 createDiagnostic(
                     Range.create(41, "  ".length, 41, "  start-time".length),
-                    DiagnosticSeverity.Error, "start-time type is date",
+                    DiagnosticSeverity.Error, "start-time should be a date. For example, 2017-04-01T10:15:00Z",
                 ),
             ],
         ),
@@ -400,23 +400,23 @@ suite("Type check tests", () => {
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
                 ),
                 createDiagnostic(
                     Range.create(5, "  ".length, 5, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
                 ),
                 createDiagnostic(
                     Range.create(7, "  ".length, 7, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
                 ),
                 createDiagnostic(
                     Range.create(9, "  ".length, 9, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval type is interval",
+                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
                 ),
                 createDiagnostic(
                     Range.create(11, "  ".length, 11, "  update-interval".length),
