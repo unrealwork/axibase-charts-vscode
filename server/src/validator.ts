@@ -388,13 +388,13 @@ export class Validator {
         const line: string = this.getCurrentLine();
         this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
         if (this.match !== null) {
-            const settingName: string = this.match[1];
+            const [declaration, settingName] = this.match;
             const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
             if (freeMarkerVariables === undefined || !freeMarkerVariables.includes(settingName)) {
                 this.result.push(createDiagnostic(
                     Range.create(
-                        this.currentLineNumber, line.indexOf(settingName),
-                        this.currentLineNumber, line.indexOf(settingName) + settingName.length,
+                        this.currentLineNumber, line.indexOf(declaration) + "\${".length,
+                        this.currentLineNumber, line.indexOf(declaration) + "\${".length + settingName.length,
                     ),
                     DiagnosticSeverity.Error, suggestionMessage(settingName, freeMarkerVariables),
                 ));
