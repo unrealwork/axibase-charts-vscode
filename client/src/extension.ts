@@ -4,15 +4,15 @@ import {
     OutgoingHttpHeaders,
     OutgoingMessage,
     request as http,
-    } from "http";
+} from "http";
 import { request as https, RequestOptions } from "https";
 import { join } from "path";
 import { URL } from "url";
 // tslint:disable-next-line:no-require-imports
 import urlRegex = require("url-regex");
 import {
-    commands, ConfigurationChangeEvent, ExtensionContext, TextDocument, ViewColumn,
-    window, workspace, WorkspaceConfiguration,
+    commands, ConfigurationChangeEvent, DiagnosticCollection, ExtensionContext, languages, TextDocument, ViewColumn,
+    window, workspace, WorkspaceConfiguration, Diagnostic, Uri,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -37,6 +37,8 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // The debug options for the server
     const debugOptions: ForkOptions = {execArgv: ["--nolazy", "--inspect=6009"]};
 
+    const diagnosticCollection: DiagnosticCollection = languages.createDiagnosticCollection();
+
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
@@ -57,6 +59,16 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
 
     // Create the language client and start the client.
     client = new LanguageClient(languageId, "Axibase Charts", serverOptions, clientOptions);
+    client.onReady().then(() => {
+        client.onNotification("charts-diagnostic", (uri: string, params: Diagnostic[]) => {
+            console.log(uri);
+            diagnosticCollection.set(Uri.parse(uri), params);
+        });
+    });
+
+    workspace.onDidCloseTextDocument((textDocument: TextDocument) => {
+        diagnosticCollection.delete(textDocument.uri);
+    });
 
     // Start the client. This will also launch the server
     client.start();
