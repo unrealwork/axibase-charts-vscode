@@ -360,7 +360,7 @@ export class Validator {
                     // Trying to find in each one of if-elseif-else... statement
                     if (!isAnyInArray(options, array)) {
                         notFound.push(displayName);
-                        continue;
+                        continue required;
                     }
                 }
                 let ifCounter: number = 0;
