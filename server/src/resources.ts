@@ -47,20 +47,20 @@ export const settingsMap: Map<string, Setting> = createSettingsMap();
  * For instance, `series` requires `entity`, but `entities` is also allowed.
  * Additionally, `series` requires `metric`, but `table` with `attribute` is also ok
  */
-export const requiredSectionSettingsMap: Map<string, Array<Array<Setting | undefined>>> = new Map([
+export const requiredSectionSettingsMap: Map<string, Setting[][]> = new Map([
     ["series", [
         [
-            settingsMap.get("entity"), settingsMap.get("value"),
-            settingsMap.get("entities"), settingsMap.get("entitygroup"),
+            settingsMap.get("entity")!, settingsMap.get("value")!,
+            settingsMap.get("entities")!, settingsMap.get("entitygroup")!,
         ],
         [
-            settingsMap.get("metric"), settingsMap.get("value"),
-            settingsMap.get("table"), settingsMap.get("attribute"),
+            settingsMap.get("metric")!, settingsMap.get("value")!,
+            settingsMap.get("table")!, settingsMap.get("attribute")!,
         ],
     ]],
-    ["widget", [[settingsMap.get("type")],
+    ["widget", [[settingsMap.get("type")!],
     ]],
-    ["dropdown", [[settingsMap.get("onchange"), settingsMap.get("changefield")],
+    ["dropdown", [[settingsMap.get("onchange")!, settingsMap.get("changefield")!],
     ]],
 ]);
 
