@@ -3,10 +3,25 @@ import { Diagnostic, FormattingOptions, TextEdit } from "vscode-languageserver";
 import { Formatter } from "../formatter";
 import { Validator } from "../validator";
 
+/**
+ * Contains a test case and executes the test
+ */
 export class Test {
+    /**
+     * The expected result of the target function
+     */
     private readonly expected: Diagnostic[] | TextEdit[];
+    /**
+     * The name of the test. Displayed in tests list after the execution
+     */
     private readonly name: string;
+    /**
+     * Formatting options used in Formatter tests
+     */
     private readonly options: FormattingOptions | undefined;
+    /**
+     * Text of the test document
+     */
     private readonly text: string;
 
     public constructor(name: string, text: string, expected: Diagnostic[] | TextEdit[], options?: FormattingOptions) {
@@ -16,18 +31,24 @@ export class Test {
         this.options = options;
     }
 
+    /**
+     * Tests Formatter
+     */
     public formatTest(): void {
         test((this.name), () => {
-            if (!this.options) {
+            if (this.options === undefined) {
                 throw new Error("We're trying to test formatter without formatting options");
             }
-            assert.deepEqual(new Formatter(this.text, this.options).lineByLine(), this.expected);
+            assert.deepStrictEqual(new Formatter(this.text, this.options).lineByLine(), this.expected);
         });
     }
 
+    /**
+     * Tests Validator
+     */
     public validationTest(): void {
         test((this.name), () => {
-            assert.deepEqual(new Validator(this.text).lineByLine(), this.expected);
+            assert.deepStrictEqual(new Validator(this.text).lineByLine(), this.expected);
         });
     }
 }

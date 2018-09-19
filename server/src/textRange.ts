@@ -52,7 +52,7 @@ export class TextRange {
      */
     public static parse(line: string, i: number): TextRange | undefined {
         const match: RegExpExecArray | null = TextRange.KEYWORD_REGEXP.exec(line);
-        if (!match) {
+        if (match === null) {
             return undefined;
         }
         const [, indent, keyword] = match;

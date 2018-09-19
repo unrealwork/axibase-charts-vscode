@@ -83,7 +83,7 @@ export const parentSections: Map<string, string[]> = new Map([
 export const getParents: (section: string) => string[] = (section: string): string[] => {
     let parents: string[] = [];
     const found: string[] | undefined = parentSections.get(section);
-    if (found) {
+    if (found !== undefined) {
         for (const father of found) {
             // JS recursion is not tail-optimized, replace if possible
             parents = parents.concat(father, getParents(father));
