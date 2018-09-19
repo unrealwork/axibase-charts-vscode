@@ -11,7 +11,7 @@ const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
  * @returns true if at least one value in map is/contains the wanted value
  */
 export function isInMap<T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean {
-    if (value === undefined || map === undefined) {
+    if (value === undefined) {
         return false;
     }
     for (const array of map.values()) {
@@ -96,8 +96,8 @@ export const getSetting: (name: string) => Setting | undefined = (name: string):
  * @param line a CSV-formatted line
  * @returns number of CSV columns in the line
  */
-export const countCsvColumns: (line?: string) => number = (line?: string): number => {
-    if (!line) {
+export function countCsvColumns(line: string): number {
+    if (line.length === 0) {
         return 0;
     }
     const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
@@ -107,7 +107,7 @@ export const countCsvColumns: (line?: string) => number = (line?: string): numbe
     }
 
     return counter;
-};
+}
 
 /**
  * Short-hand to create a diagnostic with undefined code and a standardized source
