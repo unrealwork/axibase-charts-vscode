@@ -35,7 +35,7 @@ connection.onInitialize((params: InitializeParams) => {
 });
 
 connection.onInitialized(() => {
-    if (hasConfigurationCapability) {
+    if (hasConfigurationCapability === true) {
         // Register for all configuration changes.
         connection.client.register(DidChangeConfigurationNotification.type, undefined);
     }
@@ -52,28 +52,14 @@ let globalSettings: IServerSettings = defaultSettings;
 // Cache the settings of all open documents
 const documentSettings: Map<string, Thenable<IServerSettings>> = new Map();
 
-connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
-    if (hasConfigurationCapability) {
-        // Reset all cached document settings
-        documentSettings.clear();
-    } else {
-        globalSettings = (
-            (change.settings.axibaseCharts || defaultSettings)
-        ) as IServerSettings;
-    }
-
-    // Revalidate all open text documents
-    documents.all()
-        .forEach(validateTextDocument);
-});
-
 const getDocumentSettings: (resource: string) => Thenable<IServerSettings> =
     (resource: string): Thenable<IServerSettings> => {
-        if (!hasConfigurationCapability) {
+        // can be undefined too
+        if (hasConfigurationCapability !== true) {
             return Promise.resolve(globalSettings);
         }
         let result: Thenable<IServerSettings> | undefined = documentSettings.get(resource);
-        if (!result) {
+        if (result === undefined) {
             result = connection.workspace.getConfiguration({
                 scopeUri: resource,
                 section: "axibaseCharts",
@@ -89,10 +75,6 @@ documents.onDidClose((e: TextDocumentChangeEvent) => {
     documentSettings.delete(e.document.uri);
 });
 
-documents.onDidChangeContent((change: TextDocumentChangeEvent) => {
-    validateTextDocument(change.document);
-});
-
 const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
     async (textDocument: TextDocument): Promise<void> => {
         const settings: IServerSettings = await getDocumentSettings(textDocument.uri);
@@ -102,19 +84,34 @@ const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
         const diagnostics: Diagnostic[] = validator.lineByLine();
 
         if (settings.validateFunctions) {
-            jsDomCaller.validate()
-                .forEach((element: Diagnostic) => {
-                    diagnostics.push(element);
-                });
+            jsDomCaller.validate().forEach((element: Diagnostic) => {
+                diagnostics.push(element);
+            });
         }
 
         // Send the computed diagnostics to VSCode.
         connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
     };
 
+connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
+    if (hasConfigurationCapability === true) {
+        // Reset all cached document settings
+        documentSettings.clear();
+    } else {
+        globalSettings = (change.settings.axibaseCharts == null) ? defaultSettings : change.settings.axibaseCharts;
+    }
+
+    // Revalidate all open text documents
+    documents.all().forEach(validateTextDocument);
+});
+
+documents.onDidChangeContent(async (change: TextDocumentChangeEvent) => {
+    await validateTextDocument(change.document);
+});
+
 connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
     const document: TextDocument | undefined = documents.get(params.textDocument.uri);
-    if (!document) {
+    if (document === undefined) {
         return [];
     }
     const text: string | undefined = document.getText();
@@ -125,7 +122,7 @@ connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] =
 
 connection.onCompletion((params: CompletionParams): CompletionItem[] => {
     const textDocument: TextDocument | undefined = documents.get(params.textDocument.uri);
-    if (!textDocument) {
+    if (textDocument === undefined) {
         return [];
     }
     const completionProvider: CompletionProvider = new CompletionProvider(textDocument, params.position);

@@ -181,6 +181,26 @@ suite("Incorrect dealias tests", () => {
   value = (value('avail_cpu_pool')*100)/(value('cpu_total'))`,
             [],
         ),
+        new Test(
+            "Alias of previously declared series",
+            `[widget]
+  type = bar
+  entity  = 123
+  [series]
+    metric = linux.disk.fs.space_used
+    alias = used
+  [series]
+    metric = linux.disk.fs.space_free
+    alias = free
+    alert-expression = value('free')/value('used') < 0.1/0.9
+
+[group]
+  [widget]
+    type = table
+  [widget]
+    type = property`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });

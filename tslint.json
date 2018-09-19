@@ -8,7 +8,12 @@
         ],
         "comment-format": false,
         "no-magic-numbers": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "no-non-null-assertion": false,
+        "newline-per-chained-call": false,
+        "only-arrow-functions": false,
+        "triple-equals": [true, "allow-null-check"],
+        "no-null-keyword": false
     },
     "jsRules": {
         "max-line-length": {

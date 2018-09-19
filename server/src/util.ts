@@ -6,41 +6,41 @@ import { Setting } from "./setting";
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
 /**
+ * Creates a error message containing a suggestion for misspelled setting (or without suggestion if none is available)
+ * @param found the variant found in the user's text
+ * @param suggestion the variant which is present in memory
+ * @returns message with or without a suggestion
+ */
+export const errorMessage: (found: string, suggestion?: string) => string =
+    (found: string, suggestion?: string): string =>
+        `${found} is unknown${(suggestion === undefined) ? "" : `. Suggestion: ${suggestion}`}`;
+
+/**
  * @param value the value to find
  * @param map the map to search
  * @returns true if at least one value in map is/contains the wanted value
  */
-export const isInMap: <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>) => boolean =
-    <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean => {
-        if (!value || !map) {
-            return false;
-        }
-        for (const array of map.values()) {
-            for (const item of array) {
-                if (Array.isArray(item)) {
-                    if (item.includes(value)) {
-                        return true;
-                    }
-                } else {
-                    if (item === value) {
-                        return true;
-                    }
-                }
+export function isInMap<T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean {
+    if (value === undefined) {
+        return false;
+    }
+    for (const array of map.values()) {
+        for (const item of array) {
+            if ((Array.isArray(item) && item.includes(value)) || (item === value)) {
+                return true;
             }
         }
+    }
 
-        return false;
-    };
+    return false;
+}
 
 /**
  * @param target array of aliases
  * @param array array to perform the search
  * @returns true, if array contains a value from target
  */
-export const isAnyInArray: <T>(target: T[], array: T[]) => boolean = <T>(target: T[], array: T[]): boolean => {
-    if (!array) {
-        return false;
-    }
+export function isAnyInArray<T>(target: T[], array: T[]): boolean {
     for (const item of target) {
         if (array.includes(item)) {
             return true;
@@ -48,7 +48,7 @@ export const isAnyInArray: <T>(target: T[], array: T[]) => boolean = <T>(target:
     }
 
     return false;
-};
+}
 
 /**
  * @param map the map being transformed
@@ -69,25 +69,24 @@ export const mapToArray: (map: Map<string, string[]>) => string[] = (map: Map<st
  * @param dictionary the dictionary to perform search
  * @returns message containing a suggestion if found one
  */
-export const suggestionMessage: (word: string, dictionary?: Iterable<string>) => string =
-    (word: string, dictionary?: Iterable<string>): string => {
-        if (!dictionary) {
-            return errorMessage(word);
-        }
-        let suggestion: string | undefined;
-        let min: number = Number.MAX_VALUE;
-        for (const value of dictionary) {
-            if (value) {
-                const distance: number = new Levenshtein(value, word).distance;
-                if (distance < min) {
-                    min = distance;
-                    suggestion = value;
-                }
+export function suggestionMessage(word: string, dictionary?: Iterable<string>): string {
+    if (dictionary === undefined) {
+        return errorMessage(word);
+    }
+    let suggestion: string | undefined;
+    let min: number = Infinity;
+    for (const value of dictionary) {
+        if (value.trim().length > 0) {
+            const distance: number = new Levenshtein(value, word).distance;
+            if (distance < min) {
+                min = distance;
+                suggestion = value;
             }
         }
+    }
 
-        return errorMessage(word, suggestion);
-    };
+    return errorMessage(word, suggestion);
+}
 
 /**
  * @param name name of the wanted setting
@@ -103,18 +102,18 @@ export const getSetting: (name: string) => Setting | undefined = (name: string):
  * @param line a CSV-formatted line
  * @returns number of CSV columns in the line
  */
-export const countCsvColumns: (line?: string) => number = (line?: string): number => {
-    if (!line) {
+export function countCsvColumns(line: string): number {
+    if (line.length === 0) {
         return 0;
     }
     const regex: RegExp = /(['"]).+\1|[^, \t]+/g;
     let counter: number = 0;
-    while (regex.exec(line)) {
+    while (regex.exec(line) !== null) {
         counter++;
     }
 
     return counter;
-};
+}
 
 /**
  * Short-hand to create a diagnostic with undefined code and a standardized source
@@ -136,38 +135,25 @@ export const deleteComments: (text: string) => string = (text: string): string =
     const multiLine: RegExp = /\/\*[\s\S]*?\*\//g;
     const oneLine: RegExp = /^[ \t]*#.*/mg;
     let match: RegExpExecArray | null = multiLine.exec(content);
-    if (!match) {
+    if (match === null) {
         match = oneLine.exec(content);
     }
 
-    while (match) {
+    while (match !== null) {
         const newLines: number = match[0].split("\n").length - 1;
         const spaces: string = Array(match[0].length)
             .fill(" ")
-            .concat(
-                Array(newLines)
-                    .fill("\n"),
-            )
+            .concat(Array(newLines).fill("\n"))
             .join("");
         content = `${content.substr(0, match.index)}${spaces}${content.substr(match.index + match[0].length)}`;
         match = multiLine.exec(content);
-        if (!match) {
+        if (match === null) {
             match = oneLine.exec(content);
         }
     }
 
     return content;
 };
-
-/**
- * Creates a error message containing a suggestion for misspelled setting (or without suggestion if none is available)
- * @param found the variant found in the user's text
- * @param suggestion the variant which is present in memory
- * @returns message with or without a suggestion
- */
-export const errorMessage: (found: string, suggestion?: string) => string =
-    (found: string, suggestion?: string): string =>
-        (suggestion) ? `${found} is unknown. Suggestion: ${suggestion}` : `${found} is unknown.`;
 
 /**
  * Replaces scripts body with newline character
@@ -183,7 +169,7 @@ export const deleteScripts: (text: string) => string = (text: string): string =>
  * @returns array containing both source array content and display names
  */
 export const addDisplayNames: (array?: string[]) => string[] = (array?: string[]): string[] => {
-    const result: string[] = (array) ? array : [];
+    const result: string[] = (array === undefined) ? [] : array;
     for (const item of settingsMap.values()) {
         result.push(item.displayName);
     }
