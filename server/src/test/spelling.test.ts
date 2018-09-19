@@ -124,6 +124,12 @@ metric = cpu_iowait`,
                 DiagnosticSeverity.Error, "Section tag is unclosed",
             )],
         ),
+        new Test(
+            "timezone test",
+            `[configuration]
+  timezone = \${timezone}`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
