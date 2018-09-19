@@ -854,8 +854,8 @@ export class Validator {
         const [, indent, name] = this.match;
         if (/widget/i.test(name)) {
             this.checkAliases();
-            this.deAliases.splice(0, this.currentSettings.length);
-            this.aliases.splice(0, this.currentSettings.length);
+            this.deAliases.splice(0, this.deAliases.length);
+            this.aliases.splice(0, this.aliases.length);
             this.settingValues.clear();
         }
         this.previousSettings = this.currentSettings.splice(0, this.currentSettings.length);
