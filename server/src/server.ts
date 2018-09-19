@@ -90,7 +90,8 @@ const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
         }
 
         // Send the computed diagnostics to VSCode.
-        connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        // connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+        connection.sendNotification("charts-diagnostic", [textDocument.uri, diagnostics]);
     };
 
 connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
