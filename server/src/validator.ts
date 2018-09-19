@@ -393,8 +393,8 @@ export class Validator {
             if (freeMarkerVariables === undefined || !freeMarkerVariables.includes(settingName)) {
                 this.result.push(createDiagnostic(
                     Range.create(
-                        this.currentLineNumber, line.indexOf(settingName),
-                        this.currentLineNumber, line.indexOf(settingName) + settingName.length,
+                        this.currentLineNumber, line.indexOf(this.match[0]) + 2,
+                        this.currentLineNumber, line.indexOf(this.match[0]) + 2 + settingName.length,
                     ),
                     DiagnosticSeverity.Error, suggestionMessage(settingName, freeMarkerVariables),
                 ));
