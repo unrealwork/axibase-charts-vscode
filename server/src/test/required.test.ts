@@ -203,7 +203,7 @@ endfor`,
             )],
         ),
         new Test(
-            "Correct magic configuration",
+            "Correct handling of complex configuration",
             `[configuration]
   entity = \${entity}
   [series]

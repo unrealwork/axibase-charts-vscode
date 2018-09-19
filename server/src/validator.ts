@@ -211,15 +211,13 @@ export class Validator {
      * @returns the map regardless was it modified or not
      */
     private addToParentsSettings(key: string, setting: Setting): void {
-        if (!isInMap(setting, this.parentSettings)) {
-            let array: Setting[] | undefined = this.parentSettings.get(key);
-            if (array === undefined) {
-                array = [setting];
-            } else {
-                array.push(setting);
-            }
-            this.parentSettings.set(key, array);
+        let array: Setting[] | undefined = this.parentSettings.get(key);
+        if (array === undefined) {
+            array = [setting];
+        } else {
+            array.push(setting);
         }
+        this.parentSettings.set(key, array);
     }
 
     /**
@@ -405,7 +403,7 @@ export class Validator {
     }
 
     /**
-     * Creates diagnostics if a section does not contain required settings
+     * Creates diagnostics if the current section does not contain required settings
      */
     private checkPreviousSection(): void {
         if (this.currentSection === undefined) {
@@ -434,7 +432,7 @@ export class Validator {
                     continue required;
                 }
             }
-            if (this.ifSettings.size !== 0) {
+            if (this.ifSettings.size > 0) {
                 for (const array of this.ifSettings.values()) {
                     // Trying to find in each one of if-elseif-else... statement
                     if (!isAnyInArray(options, array)) {
