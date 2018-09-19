@@ -10,35 +10,28 @@ const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
  * @param map the map to search
  * @returns true if at least one value in map is/contains the wanted value
  */
-export const isInMap: <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>) => boolean =
-    <T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean => {
-        if (!value || !map) {
-            return false;
-        }
-        for (const array of map.values()) {
-            for (const item of array) {
-                if (Array.isArray(item)) {
-                    if (item.includes(value)) {
-                        return true;
-                    }
-                } else {
-                    if (item === value) {
-                        return true;
-                    }
-                }
+export function isInMap<T>(value: T, map: Map<string, T[]> | Map<string, T[][]>): boolean {
+    if (value === undefined || map === undefined) {
+        return false;
+    }
+    for (const array of map.values()) {
+        for (const item of array) {
+            if ((Array.isArray(item) && item.includes(value)) || (item === value)) {
+                return true;
             }
         }
+    }
 
-        return false;
-    };
+    return false;
+}
 
 /**
  * @param target array of aliases
  * @param array array to perform the search
  * @returns true, if array contains a value from target
  */
-export const isAnyInArray: <T>(target: T[], array: T[]) => boolean = <T>(target: T[], array: T[]): boolean => {
-    if (!array) {
+export function isAnyInArray<T>(target: T[], array: T[]): boolean {
+    if (array == null) {
         return false;
     }
     for (const item of target) {
@@ -48,7 +41,7 @@ export const isAnyInArray: <T>(target: T[], array: T[]) => boolean = <T>(target:
     }
 
     return false;
-};
+}
 
 /**
  * @param map the map being transformed
