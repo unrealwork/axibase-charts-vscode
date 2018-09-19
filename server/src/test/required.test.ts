@@ -202,6 +202,18 @@ endfor`,
                 DiagnosticSeverity.Error, "metric is required",
             )],
         ),
+        new Test(
+            "Correct magic configuration",
+            `[configuration]
+  entity = \${entity}
+  [series]
+    metric = nmon.processes.asleep_diocio
+[widget]
+  type = table
+  metric = nmon.jfs_filespace_%used
+  [series]`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
