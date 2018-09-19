@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { parentSections, possibleSections, requiredSectionSettingsMap } from "./resources";
+import { possibleSections, requiredSectionSettingsMap } from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
 import {
@@ -23,7 +23,7 @@ export class Validator {
     private readonly parentSettings: Map<string, Setting[]> = new Map<string, Setting[]>();
     private previousSection: TextRange | undefined;
     private previousSettings: Setting[] = [];
-    private requiredSettings: Array<Array<Setting | undefined>> = [];
+    private requiredSettings: Setting[][] = [];
     private readonly result: Diagnostic[] = [];
     private settingValues: Map<string, string> = new Map<string, string>();
     private urlParameters: string[] | undefined;
@@ -79,9 +79,9 @@ export class Validator {
      * if they're required by a section
      */
     private addCurrentToParentSettings(): void {
-        if (this.currentSection) {
+        if (this.currentSection != null) {
             for (const setting of this.currentSettings) {
-                this.addToSettingMap(this.currentSection.text, setting);
+                this.addToParentsSettings(this.currentSection.text, setting);
             }
         }
     }
@@ -134,16 +134,14 @@ export class Validator {
      * @param key the key, which value will contain the setting
      * @returns the map regardless was it modified or not
      */
-    private addToSettingMap(key: string, setting: Setting): void {
-        if (!setting) {
-            return;
-        }
+    private addToParentsSettings(key: string, setting: Setting): void {
         if (!isInMap(setting, this.parentSettings)) {
             let array: Setting[] | undefined = this.parentSettings.get(key);
-            if (!array) {
-                array = [];
+            if (array === undefined) {
+                array = [setting];
+            } else {
+                array.push(setting);
             }
-            array.push(setting);
             this.parentSettings.set(key, array);
         }
     }
@@ -331,68 +329,61 @@ export class Validator {
      * Creates diagnostics if a section does not contain required settings
      */
     private checkPreviousSection(): void {
-        if (!this.currentSection) {
+        if (this.currentSection == null) {
             return;
         }
-        const required: Array<Array<Setting | undefined>> | undefined =
-            requiredSectionSettingsMap.get(this.currentSection.text);
-        this.requiredSettings = (required) ? required.concat(this.requiredSettings) : this.requiredSettings;
-        if (this.requiredSettings.length !== 0) {
-            const notFound: string[] = [];
-            this.requiredSettings.forEach((options: Array<Setting | undefined>): void => {
-                if (options) {
-                    const setting: Setting | undefined = options[0];
-                    if (!setting) {
-                        return;
-                    }
-                    const displayName: string = setting.displayName;
-                    if (isAnyInArray(options, this.currentSettings)) {
-                        return;
-                    }
-                    for (const array of this.parentSettings.values()) {
-                        // Trying to find in this section parents
-                        if (isAnyInArray(options, array)) {
-                            return;
-                        }
-                    }
-                    if (this.ifSettings && this.ifSettings.size !== 0) {
-                        for (const array of this.ifSettings.values()) {
-                            // Trying to find in each one of if-elseif-else... statement
-                            if (!isAnyInArray(options, array)) {
-                                notFound.push(displayName);
-
-                                return;
-                            }
-                        }
-                        let ifCounter: number = 0;
-                        let elseCounter: number = 0;
-                        for (const statement of this.ifSettings.keys()) {
-                            if (/\bif\b/.test(statement)) {
-                                ifCounter++;
-                            } else if (/\belse\b/.test(statement)) {
-                                elseCounter++;
-                            }
-                        }
-                        if (ifCounter !== elseCounter) { notFound.push(displayName); }
-                    } else {
-                        if (displayName === "metric") {
-                            const columnMetric: string | undefined = this.settingValues.get("columnmetric");
-                            const columnValue: string | undefined = this.settingValues.get("columnvalue");
-                            if (columnMetric === "null" && columnValue === "null") {
-                                return;
-                            }
-                        }
+        const required: Setting[][] | undefined = requiredSectionSettingsMap.get(this.currentSection.text);
+        if (required != null) {
+            this.requiredSettings = required.concat(this.requiredSettings);
+        }
+        const notFound: string[] = [];
+        required: for (const options of this.requiredSettings) {
+            const displayName: string = options[0].displayName;
+            if (displayName === "metric") {
+                const columnMetric: string | undefined = this.settingValues.get("columnmetric");
+                const columnValue: string | undefined = this.settingValues.get("columnvalue");
+                if (columnMetric === "null" && columnValue === "null") {
+                    continue;
+                }
+            }
+            if (isAnyInArray(options, this.currentSettings)) {
+                continue;
+            }
+            for (const array of this.parentSettings.values()) {
+                // Trying to find in this section parents
+                if (isAnyInArray(options, array)) {
+                    continue required;
+                }
+            }
+            if (this.ifSettings.size !== 0) {
+                for (const array of this.ifSettings.values()) {
+                    // Trying to find in each one of if-elseif-else... statement
+                    if (!isAnyInArray(options, array)) {
                         notFound.push(displayName);
+                        continue;
                     }
                 }
-            });
-            for (const option of notFound) {
-                this.result.push(createDiagnostic(
-                    this.currentSection.range, DiagnosticSeverity.Error, `${option} is required`,
-                ));
+                let ifCounter: number = 0;
+                let elseCounter: number = 0;
+                for (const statement of this.ifSettings.keys()) {
+                    if (/\bif\b/.test(statement)) {
+                        ifCounter++;
+                    } else if (/\belse\b/.test(statement)) {
+                        elseCounter++;
+                    }
+                }
+                if (ifCounter === elseCounter) {
+                    continue;
+                }
             }
+            notFound.push(displayName);
         }
-        this.requiredSettings = [];
+        for (const option of notFound) {
+            this.result.push(createDiagnostic(
+                this.currentSection.range, DiagnosticSeverity.Error, `${option} is required`,
+            ));
+        }
+        this.requiredSettings.splice(0, this.requiredSettings.length);
     }
 
     /**
@@ -768,32 +759,30 @@ export class Validator {
     private handleSection(): void {
         this.checkPreviousSection();
         this.addCurrentToParentSettings();
-        if (!this.match) {
-            if (this.previousSection) {
+        if (this.match == null) {
+            if (this.previousSection != null) {
                 this.currentSection = this.previousSection;
                 this.currentSettings = this.previousSettings;
             }
 
             return;
         }
-        if (/widget/i.test(this.match[2])) {
+        const [, indent, name] = this.match;
+        if (/widget/i.test(name)) {
             this.checkAliases();
-            this.deAliases = [];
-            this.aliases = [];
+            this.deAliases.splice(0, this.currentSettings.length);
+            this.aliases.splice(0, this.currentSettings.length);
             this.settingValues.clear();
         }
         this.previousSettings = this.currentSettings;
         this.previousSection = this.currentSection;
-        this.currentSettings = [];
+        this.currentSettings.splice(0, this.currentSettings.length);
         this.ifSettings.clear();
-        this.currentSection = new TextRange(this.match[2], Range.create(
-            this.currentLineNumber, this.match[1].length,
-            this.currentLineNumber, this.match[1].length + this.match[2].length,
+        this.currentSection = new TextRange(name, Range.create(
+            this.currentLineNumber, indent.length,
+            this.currentLineNumber, indent.length + name.length,
         ));
-
-        if (isInMap(this.currentSection.text, parentSections)) {
-            this.parentSettings.set(this.currentSection.text, []);
-        }
+        this.parentSettings.delete(this.currentSection.text);
     }
 
     /**
