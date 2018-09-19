@@ -388,8 +388,7 @@ export class Validator {
         const line: string = this.getCurrentLine();
         this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
         if (this.match !== null) {
-            const [declaration, variable] = this.match;
-            const settingName: string = variable;
+            const [declaration, settingName] = this.match;
             const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
             if (freeMarkerVariables === undefined || !freeMarkerVariables.includes(settingName)) {
                 this.result.push(createDiagnostic(
