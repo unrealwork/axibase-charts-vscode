@@ -205,7 +205,7 @@ endfor`,
                 Range.create(
                     6, "for agent in Object.keys(".length, 6, "for agent in Object.keys(".length + "pps".length,
                 ),
-                DiagnosticSeverity.Error, "pps is unknown. Suggestion: apps",
+                DiagnosticSeverity.Error, "pps is unknown.",
             )],
         ),
         new Test(
