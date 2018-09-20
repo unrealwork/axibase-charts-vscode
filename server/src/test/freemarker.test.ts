@@ -101,12 +101,12 @@ suite("FreeMarker unknown variables", () => {
                 createDiagnostic(
                     Range.create(10, "    title = \${".length, 10, "    title = \${".length + "lbar".length),
                     DiagnosticSeverity.Error,
-                    errorMessage("lbar", "lpar"),
+                    errorMessage("lbar"),
                 ),
                 createDiagnostic(
                     Range.create(11, "    label = \${100 * ".length, 11, "    label = \${100 * ".length + "lbar".length),
                     DiagnosticSeverity.Error,
-                    errorMessage("lbar", "lpar"),
+                    errorMessage("lbar"),
                 ),
             ],
         ),
@@ -137,7 +137,7 @@ suite("FreeMarker unknown variables", () => {
                 createDiagnostic(
                     Range.create(5, "<#list ".length, 5, "<#list ".length + "lbars".length),
                     DiagnosticSeverity.Error,
-                    errorMessage("lbars", "lpars"),
+                    errorMessage("lbars"),
                 ),
             ],
         ),

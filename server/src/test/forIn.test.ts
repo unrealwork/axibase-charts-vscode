@@ -21,7 +21,7 @@ for srv in server
 endfor`,
             [createDiagnostic(
                 Range.create(1, "for srv in ".length, 1, "for srv in ".length + "server".length),
-                DiagnosticSeverity.Error, errorMessage("server", "servers"),
+                DiagnosticSeverity.Error, errorMessage("server"),
             )],
         ),
         new Test(
@@ -32,7 +32,7 @@ for srv in server
 endfor`,
             [createDiagnostic(
                 Range.create(1, "for srv in ".length, 1, "for srv in ".length + "server".length),
-                DiagnosticSeverity.Error, errorMessage("server", "servers"),
+                DiagnosticSeverity.Error, errorMessage("server"),
             )],
         ),
         new Test(
@@ -51,7 +51,7 @@ for srv in server
 endfor`,
             [createDiagnostic(
                 Range.create(1, "for srv in ".length, 1, "for srv in ".length + "server".length),
-                DiagnosticSeverity.Error, errorMessage("server", "servers"),
+                DiagnosticSeverity.Error, errorMessage("server"),
             )],
         ),
         new Test(
@@ -82,7 +82,7 @@ for srv in server
 endfor`,
             [createDiagnostic(
                 Range.create(3, "for srv in ".length, 3, "for srv in ".length + "server".length),
-                DiagnosticSeverity.Error, errorMessage("server", "servers"),
+                DiagnosticSeverity.Error, errorMessage("server"),
             )],
         ),
         new Test(
@@ -96,7 +96,7 @@ for srv in server
 endfor`,
             [createDiagnostic(
                 Range.create(4, "for srv in ".length, 4, "for srv in ".length + "server".length),
-                DiagnosticSeverity.Error, errorMessage("server", "servers"),
+                DiagnosticSeverity.Error, errorMessage("server"),
             )],
         ),
         new Test(
@@ -121,7 +121,7 @@ for srv in server
 endfor`,
             [createDiagnostic(
                 Range.create(4, "for srv in ".length, 4, "for srv in ".length + "server".length),
-                DiagnosticSeverity.Error, errorMessage("server", "servers"),
+                DiagnosticSeverity.Error, errorMessage("server"),
             )],
         ),
         new Test(
@@ -146,7 +146,7 @@ var servers = {
 endvar`,
             [createDiagnostic(
                 Range.create(0, "for srv in ".length, 0, "for srv in ".length + "servers".length),
-                DiagnosticSeverity.Error, errorMessage("servers", "entity"),
+                DiagnosticSeverity.Error, errorMessage("servers"),
             )],
         ),
         new Test(
@@ -160,7 +160,7 @@ var servers = {
 endvar`,
             [createDiagnostic(
                 Range.create(0, "for srv in ".length, 0, "for srv in ".length + "servers".length),
-                DiagnosticSeverity.Error, errorMessage("servers", "entity"),
+                DiagnosticSeverity.Error, errorMessage("servers"),
             )],
         ),
         new Test(
@@ -205,7 +205,7 @@ endfor`,
                 Range.create(
                     6, "for agent in Object.keys(".length, 6, "for agent in Object.keys(".length + "pps".length,
                 ),
-                DiagnosticSeverity.Error, "pps is unknown. Suggestion: apps",
+                DiagnosticSeverity.Error, "pps is unknown.",
             )],
         ),
         new Test(
