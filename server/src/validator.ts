@@ -394,7 +394,7 @@ export class Validator {
             let start: number, end: number;
             let settingMatch: RegExpExecArray | null;
             let settingName: string;
-            const regSetting: RegExp = new RegExp(/(\\w+)/, "g");
+            const regSetting: RegExp = new RegExp("(\\w+)", "g");
             const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
             while ((settingMatch = regSetting.exec(declaration)) != null) {
                 settingName = settingMatch[0];
