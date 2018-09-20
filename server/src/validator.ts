@@ -978,7 +978,7 @@ export class Validator {
             ));
         } else {
             if (word === "tag") {
-                this.result.push(createDiagnostic(range, DiagnosticSeverity.Error, deprecatedTagSection));
+                this.result.push(createDiagnostic(range, DiagnosticSeverity.Warning, deprecatedTagSection));
             }
         }
     }
