@@ -46,14 +46,14 @@ suite("Warn about setting interpreted as a tag", () => {
 
 suite("Warn about deprecated [tag] section", () => {
     const expectedDiagnostic: Diagnostic = createDiagnostic(
-        Range.create(Position.create(1, "	".length + 1),
-                     Position.create(1, "[tags]".length - 1)),
-        DiagnosticSeverity.Warning, deprecatedTagSection,
+        Range.create(Position.create(0, "	".length),
+                     Position.create(0, "[tags]".length - 1)),
+        DiagnosticSeverity.Error, deprecatedTagSection,
     );
     [
         new Test("Deprecated [tag]",
-            `[tag]
+                 `[tag]
                     a = b
-            `, [expectedDiagnostic]),
+            `,   [expectedDiagnostic]),
     ].forEach((test: Test) => test.validationTest());
 });
