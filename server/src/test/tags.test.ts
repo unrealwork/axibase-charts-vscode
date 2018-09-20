@@ -1,6 +1,7 @@
-import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
+import { deprecatedTagSection } from "../messageUtil";
 
 const errorMessage: (setting: string) => string = (setting: string): string => `${setting} is interpreted as a` +
     " series tag and is sent to the server. Remove the setting from the [tags] section or enclose it" +
@@ -37,6 +38,22 @@ suite("Warn about setting interpreted as a tag", () => {
         ),
     ];
 
-    tests.forEach((test: Test) => { test.validationTest(); });
+    tests.forEach((test: Test) => {
+        test.validationTest();
+    });
 
+});
+
+suite("Warn about deprecated [tag] section", () => {
+    const expectedDiagnostic: Diagnostic = createDiagnostic(
+        Range.create(Position.create(1, "	".length + 1),
+                     Position.create(1, "[tags]".length - 1)),
+        DiagnosticSeverity.Warning, deprecatedTagSection,
+    );
+    [
+        new Test("Deprecated [tag]",
+            `[tag]
+                    a = b
+            `, [expectedDiagnostic]),
+    ].forEach((test: Test) => test.validationTest());
 });
