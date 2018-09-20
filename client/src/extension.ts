@@ -61,7 +61,6 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     client = new LanguageClient(languageId, "Axibase Charts", serverOptions, clientOptions);
     client.onReady().then(() => {
         client.onNotification("charts-diagnostic", (uri: string, params: Diagnostic[]) => {
-            console.log(uri);
             diagnosticCollection.set(Uri.parse(uri), params);
         });
     });
