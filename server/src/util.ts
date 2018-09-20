@@ -5,14 +5,6 @@ import { Setting } from "./setting";
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
 /**
- * Creates a error message for unknown setting or value.
- * @param found the variant found in the user's text
- * @returns message with or without a suggestion
- */
-export const errorMessage: (found: string) => string =
-    (found: string): string => `${found} is unknown.`;
-
-/**
  * @param value the value to find
  * @param map the map to search
  * @returns true if at least one value in map is/contains the wanted value

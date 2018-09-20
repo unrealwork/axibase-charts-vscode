@@ -1,6 +1,7 @@
 import { DiagnosticSeverity } from "vscode-languageserver";
-import { createDiagnostic, errorMessage } from "../util";
+import { createDiagnostic} from "../util";
 import { Test } from "./test";
+import { unknownToken } from "../messageUtil";
 
 const firstVar: string = "serv";
 const secondVar: string = "server";
@@ -56,7 +57,7 @@ endfor`,
                     end: { character: "       entity = @{".length + firstVar.length, line: 4 },
                     start: { character: "       entity = @{".length, line: 4 },
                 },
-                DiagnosticSeverity.Error, errorMessage(firstVar),
+                DiagnosticSeverity.Error, unknownToken(firstVar),
             )],
         ),
         new Test(
@@ -78,14 +79,14 @@ endfor`,
                         end: { character: "       entity = @{".length + firstVar.length, line: 4 },
                         start: { character: "       entity = @{".length, line: 4 },
                     },
-                    DiagnosticSeverity.Error, errorMessage(firstVar),
+                    DiagnosticSeverity.Error, unknownToken(firstVar),
                 ),
                 createDiagnostic(
                     {
                         end: { character: "       entity = @{".length + secondVar.length, line: 9 },
                         start: { character: "       entity = @{".length, line: 9 },
                     },
-                    DiagnosticSeverity.Error, errorMessage(secondVar),
+                    DiagnosticSeverity.Error, unknownToken(secondVar),
                 )],
         ),
         new Test(
@@ -106,7 +107,7 @@ endfor`,
                     end: { character: "       entity = @{".length + firstVar.length, line: 4 },
                     start: { character: "       entity = @{".length, line: 4 },
                 },
-                DiagnosticSeverity.Error, errorMessage(firstVar),
+                DiagnosticSeverity.Error, unknownToken(firstVar),
             )],
         ),
         new Test(
@@ -148,7 +149,7 @@ endfor`,
                     end: { character: "           entity = @{".length + thirdVar.length, line: 8 },
                     start: { character: "           entity = @{".length, line: 8 },
                 },
-                DiagnosticSeverity.Error, errorMessage(thirdVar),
+                DiagnosticSeverity.Error, unknownToken(thirdVar),
             )],
         ),
         new Test(
@@ -174,7 +175,7 @@ endfor`,
                     end: { character: "       entity = @{".length + secondVar.length, line: 4 },
                     start: { character: "       entity = @{".length, line: 4 },
                 },
-                DiagnosticSeverity.Error, errorMessage(secondVar),
+                DiagnosticSeverity.Error, unknownToken(secondVar),
             )],
         ),
         new Test(
@@ -223,7 +224,7 @@ endfor`,
                     },
                     start: { character: `       entity = @{keepAfterLast(${secondVar}, 'v')}, @{`.length, line: 4 },
                 },
-                DiagnosticSeverity.Error, errorMessage(firstVar),
+                DiagnosticSeverity.Error, unknownToken(firstVar),
             )],
         ),
     ];

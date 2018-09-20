@@ -2,7 +2,7 @@ import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
-const errorMessage: string = "script has no matching endscript";
+const unknownToken: string = "script has no matching endscript";
 
 suite("Script endscript tests", () => {
     const tests: Test[] = [
@@ -18,7 +18,7 @@ endscript`,
 endscrpt`,
             [createDiagnostic(
                 Range.create(Position.create(0, 0), Position.create(0, "script".length)),
-                DiagnosticSeverity.Error, errorMessage,
+                DiagnosticSeverity.Error, unknownToken,
             )],
         ),
         new Test(
@@ -46,7 +46,7 @@ script
 endscrpt`,
             [createDiagnostic(
                 Range.create(Position.create(0, 0), Position.create(0, "script".length)),
-                DiagnosticSeverity.Error, errorMessage,
+                DiagnosticSeverity.Error, unknownToken,
             )],
         ),
         new Test(

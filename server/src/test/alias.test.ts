@@ -1,6 +1,7 @@
 /* tslint:disable:no-magic-numbers */
 import { DiagnosticSeverity, Range } from "vscode-languageserver";
-import { createDiagnostic, errorMessage } from "../util";
+import { unknownToken } from "../messageUtil";
+import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
 suite("Incorrect dealias tests", () => {
@@ -29,7 +30,7 @@ suite("Incorrect dealias tests", () => {
   value = value('s2') * 2`,
             [createDiagnostic(
                 Range.create(7, "  value = value('".length, 7, "  value = value('".length + "s2".length),
-                DiagnosticSeverity.Error, errorMessage("s2"),
+                DiagnosticSeverity.Error, unknownToken("s2"),
             )],
         ),
         new Test(
@@ -61,11 +62,11 @@ suite("Incorrect dealias tests", () => {
             [
                 createDiagnostic(
                     Range.create(7, "  value = value('".length, 7, "  value = value('".length + "s2".length),
-                    DiagnosticSeverity.Error, errorMessage("s2"),
+                    DiagnosticSeverity.Error, unknownToken("s2"),
                 ),
                 createDiagnostic(
                     Range.create(11, "  value = value('".length, 11, "  value = value('".length + "s3".length),
-                    DiagnosticSeverity.Error, errorMessage("s3"),
+                    DiagnosticSeverity.Error, unknownToken("s3"),
                 )],
         ),
         new Test(
@@ -108,7 +109,7 @@ suite("Incorrect dealias tests", () => {
   value = value('s2') * 2`,
             [createDiagnostic(
                 Range.create(11, "  value = value('".length, 11, "  value = value('".length + "s3".length),
-                DiagnosticSeverity.Error, errorMessage("s3"),
+                DiagnosticSeverity.Error, unknownToken("s3"),
             )],
         ),
         new Test(
@@ -161,7 +162,7 @@ suite("Incorrect dealias tests", () => {
   entity = srv`,
             [createDiagnostic(
                 Range.create(11, "  value = value('".length, 11, "  value = value('".length + "sc".length),
-                DiagnosticSeverity.Error, errorMessage("sc"),
+                DiagnosticSeverity.Error, unknownToken("sc"),
             )],
         ),
         new Test(

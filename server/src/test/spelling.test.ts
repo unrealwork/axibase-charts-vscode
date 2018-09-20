@@ -1,7 +1,8 @@
 /* tslint:disable:no-magic-numbers */
 import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { createDiagnostic, errorMessage } from "../util";
+import { createDiagnostic} from "../util";
 import { Test } from "./test";
+import { unknownToken } from "../messageUtil";
 
 suite("Spelling checks", () => {
     const tests: Test[] = [
@@ -13,7 +14,7 @@ suite("Spelling checks", () => {
             [
                 createDiagnostic(
                     Range.create(Position.create(2, "	".length), Position.create(2, "	startime".length)),
-                    DiagnosticSeverity.Error, errorMessage("startime"),
+                    DiagnosticSeverity.Error, unknownToken("startime"),
                 ),
 
             ],
@@ -24,7 +25,7 @@ suite("Spelling checks", () => {
 	starttime = 2018`,
             [createDiagnostic(
                 Range.create(Position.create(0, "[".length), Position.create(0, "[eries".length)),
-                DiagnosticSeverity.Error, errorMessage("eries"),
+                DiagnosticSeverity.Error, unknownToken("eries"),
             )],
         ),
         new Test(
@@ -33,7 +34,7 @@ suite("Spelling checks", () => {
 	starttime = 2018`,
             [createDiagnostic(
                 Range.create(Position.create(0, "[".length), Position.create(0, "[starttime".length)),
-                DiagnosticSeverity.Error, errorMessage("starttime"),
+                DiagnosticSeverity.Error, unknownToken("starttime"),
             )],
         ),
         new Test(
@@ -51,11 +52,11 @@ suite("Spelling checks", () => {
             [
                 createDiagnostic(
                     Range.create(Position.create(2, "[".length), Position.create(2, "[starttime".length)),
-                    DiagnosticSeverity.Error, errorMessage("starttime"),
+                    DiagnosticSeverity.Error, unknownToken("starttime"),
                 ),
                 createDiagnostic(
                     Range.create(Position.create(3, "	".length), Position.create(3, " ".length + "startime".length)),
-                    DiagnosticSeverity.Error, errorMessage("startime"),
+                    DiagnosticSeverity.Error, unknownToken("startime"),
                 )],
         ),
         new Test(
@@ -69,7 +70,7 @@ suite("Spelling checks", () => {
   startime = 2018`,
             [createDiagnostic(
                 Range.create(Position.create(6, "  ".length), Position.create(6, "  ".length + "startime".length)),
-                DiagnosticSeverity.Error, errorMessage("startime"),
+                DiagnosticSeverity.Error, unknownToken("startime"),
             )],
         ),
         new Test(
@@ -103,7 +104,7 @@ type = chart`,
   ed = 0`,
             [createDiagnostic(
                 Range.create(Position.create(3, "  ".length), Position.create(3, "  ".length + "ad".length)),
-                DiagnosticSeverity.Error, errorMessage("ad"),
+                DiagnosticSeverity.Error, unknownToken("ad"),
             )],
         ),
         new Test(
@@ -131,7 +132,7 @@ metric = cpu_iowait`,
             [
                 createDiagnostic(
                     Range.create(1, "  timezone = \${".length, 1, "  timezone = \${".length + "timezone".length),
-                    DiagnosticSeverity.Error, errorMessage("timezone"),
+                    DiagnosticSeverity.Error, unknownToken("timezone"),
                 ),
             ],
         ),
