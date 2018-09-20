@@ -16,7 +16,14 @@ suite("FreeMarker unknown variables", () => {
 [group]
 [widget]
     type = gauge
-    title = \${lpar[1]}`,
+    title = \${lpar[1]}
+    
+<#assign cpus = getTags("nmon.cpu.idle%", "example", "id") >
+<#list cpus as id >
+    [series]
+        entity = example
+        metric = \${100 * id}
+</#list>`,
             [
                 createDiagnostic(
                     Range.create(0, 0, 0, "<#assign".length),
@@ -25,6 +32,16 @@ suite("FreeMarker unknown variables", () => {
                 ),
                 createDiagnostic(
                     Range.create(5, 0, 5, "<#list".length),
+                    DiagnosticSeverity.Information,
+                    "Freemarker expressions are deprecated. Use a native collection: list, csv table, var object.",
+                ), 
+                createDiagnostic(
+                    Range.create(12, 0, 12, "<#assign".length),
+                    DiagnosticSeverity.Information,
+                    "Freemarker expressions are deprecated. Use a native collection: list, csv table, var object.",
+                ),
+                createDiagnostic(
+                    Range.create(13, 0, 13, "<#list".length),
                     DiagnosticSeverity.Information,
                     "Freemarker expressions are deprecated. Use a native collection: list, csv table, var object.",
                 ),
@@ -68,7 +85,8 @@ suite("FreeMarker unknown variables", () => {
 [group]
 [widget]
     type = gauge
-    title = \${lbar[1]}`,
+    title = \${lbar[1]}
+    label = \${100 * lbar}`,
             [
                 createDiagnostic(
                     Range.create(0, 0, 0, "<#assign".length),
@@ -82,6 +100,11 @@ suite("FreeMarker unknown variables", () => {
                 ),
                 createDiagnostic(
                     Range.create(10, "    title = \${".length, 10, "    title = \${".length + "lbar".length),
+                    DiagnosticSeverity.Error,
+                    errorMessage("lbar", "lpar"),
+                ),
+                createDiagnostic(
+                    Range.create(11, "    label = \${100 * ".length, 11, "    label = \${100 * ".length + "lbar".length),
                     DiagnosticSeverity.Error,
                     errorMessage("lbar", "lpar"),
                 ),
