@@ -11,8 +11,8 @@ import { URL } from "url";
 // tslint:disable-next-line:no-require-imports
 import urlRegex = require("url-regex");
 import {
-    commands, ConfigurationChangeEvent, DiagnosticCollection, ExtensionContext, languages, TextDocument, ViewColumn,
-    window, workspace, WorkspaceConfiguration, Diagnostic, Uri,
+    commands, ConfigurationChangeEvent, Diagnostic, DiagnosticCollection, ExtensionContext, languages, TextDocument,
+    Uri, ViewColumn, window, workspace, WorkspaceConfiguration,
 } from "vscode";
 import {
     ForkOptions, LanguageClient, LanguageClientOptions, ServerOptions, TransportKind,
@@ -35,21 +35,21 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     // The server is implemented in node
     const serverModule: string = context.asAbsolutePath(join("server", "out", "server.js"));
     // The debug options for the server
-    const debugOptions: ForkOptions = {execArgv: ["--nolazy", "--inspect=6009"]};
+    const debugOptions: ForkOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
     const diagnosticCollection: DiagnosticCollection = languages.createDiagnosticCollection();
 
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        debug: {module: serverModule, options: debugOptions, transport: TransportKind.ipc},
-        run: {module: serverModule, transport: TransportKind.ipc},
+        debug: { module: serverModule, options: debugOptions, transport: TransportKind.ipc },
+        run: { module: serverModule, transport: TransportKind.ipc },
     };
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
         // Register the server for plain text documents
-        documentSelector: [{language: languageId, scheme: "file"}],
+        documentSelector: [{ language: languageId, scheme: "file" }],
         outputChannelName: "Axibase Charts",
         synchronize: {
             // Notify the server about file changes to ".clientrc files contain in the workspace
@@ -61,7 +61,6 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     client = new LanguageClient(languageId, "Axibase Charts", serverOptions, clientOptions);
     client.onReady().then(() => {
         client.onNotification("charts-diagnostic", (uri: string, params: Diagnostic[]) => {
-            console.log(uri);
             diagnosticCollection.set(Uri.parse(uri), params);
         });
     });
@@ -148,7 +147,7 @@ export const deactivate: () => Thenable<void> = (): Thenable<void> => {
  * @param url the URL to be validated
  */
 const validateUrl: (url: string) => boolean = (url: string): boolean =>
-    urlRegex({exact: true, strict: true})
+    urlRegex({ exact: true, strict: true })
         .test(url);
 
 /**
@@ -201,7 +200,7 @@ const constructConnection: () => Promise<IConnectionDetails> = async (): Promise
     window.showInformationMessage(`Connected to ${address}:${port} ${username ? `as ${username}` : ""}`);
     atsd = atsd === undefined ? true : atsd;
 
-    return {url, cookie, atsd};
+    return { url, cookie, atsd };
 };
 
 /**
@@ -217,8 +216,8 @@ const performRequest: (address: string, username?: string, password?: string) =>
             "Authorization": `Basic ${new Buffer(`${username}:${password}`).toString("base64")}`,
             "user-agent": userAgent,
         } : {
-            "user-agent": userAgent,
-        };
+                "user-agent": userAgent,
+            };
 
         const options: RequestOptions = {
             hostname: url.hostname,
