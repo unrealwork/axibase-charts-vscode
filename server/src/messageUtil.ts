@@ -6,4 +6,16 @@ type MessageFactoryMethod = (found: string) => string;
  */
 export const unknownToken: MessageFactoryMethod = (found: string): string => `${found} is unknown.`;
 export const deprecatedTagSection: string = `Replace \`[tag]\` sections with \`[tags]\`.
-    Enclose the tag name in double quotes in case it contains special characters.`;
+Enclose the tag name in double quotes in case it contains special characters.
+
+[tag]
+  name = k
+  value = v
+[tag]
+  name = my column
+  value = my value
+
+[tags]
+  k = v
+  "my column" = my value
+`;
