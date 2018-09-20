@@ -46,8 +46,8 @@ suite("Warn about setting interpreted as a tag", () => {
 
 suite("Warn about deprecated [tag] section", () => {
     const expectedDiagnostic: Diagnostic = createDiagnostic(
-        Range.create(Position.create(0, "	".length),
-                     Position.create(0, "[tags]".length - 1)),
+        Range.create(Position.create(0, 1),
+                     Position.create(0, 5)),
         DiagnosticSeverity.Error, deprecatedTagSection,
     );
     [

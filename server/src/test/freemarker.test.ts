@@ -35,7 +35,7 @@ suite("FreeMarker unknown variables", () => {
                     Range.create(5, 0, 5, "<#list".length),
                     DiagnosticSeverity.Information,
                     "Freemarker expressions are deprecated. Use a native collection: list, csv table, var object.",
-                ), 
+                ),
                 createDiagnostic(
                     Range.create(12, 0, 12, "<#assign".length),
                     DiagnosticSeverity.Information,
