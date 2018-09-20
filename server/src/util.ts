@@ -1,4 +1,3 @@
-import * as Levenshtein from "levenshtein";
 import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
 import { settingsMap } from "./resources";
 import { Setting } from "./setting";
@@ -6,14 +5,12 @@ import { Setting } from "./setting";
 const DIAGNOSTIC_SOURCE: string = "Axibase Charts";
 
 /**
- * Creates a error message containing a suggestion for misspelled setting (or without suggestion if none is available)
+ * Creates a error message for unknown setting or value.
  * @param found the variant found in the user's text
- * @param suggestion the variant which is present in memory
  * @returns message with or without a suggestion
  */
-export const errorMessage: (found: string, suggestion?: string) => string =
-    (found: string, suggestion?: string): string =>
-        `${found} is unknown${(suggestion === undefined) ? "" : `. Suggestion: ${suggestion}`}`;
+export const errorMessage: (found: string) => string =
+    (found: string): string => `${found} is unknown.`;
 
 /**
  * @param value the value to find
@@ -49,45 +46,6 @@ export function isAnyInArray<T>(target: T[], array: T[]): boolean {
 
     return false;
 }
-
-/**
- * @param map the map being transformed
- * @returns array containing all values from values of map
- */
-export const mapToArray: (map: Map<string, string[]>) => string[] = (map: Map<string, string[]>): string[] => {
-    let array: string[] = [];
-    for (const item of map.values()) {
-        array = array.concat(item);
-    }
-
-    return array;
-};
-
-/**
- * Looks for a closest item (lowest Levenshtein distance) in the dictionary to the word
- * @param word the word to perform search
- * @param dictionary the dictionary to perform search
- * @returns message containing a suggestion if found one
- */
-export function suggestionMessage(word: string, dictionary?: Iterable<string>): string {
-    if (dictionary === undefined) {
-        return errorMessage(word);
-    }
-    let suggestion: string | undefined;
-    let min: number = Infinity;
-    for (const value of dictionary) {
-        if (value.trim().length > 0) {
-            const distance: number = new Levenshtein(value, word).distance;
-            if (distance < min) {
-                min = distance;
-                suggestion = value;
-            }
-        }
-    }
-
-    return errorMessage(word, suggestion);
-}
-
 /**
  * @param name name of the wanted setting
  * @returns the wanted setting or undefined if not found
@@ -162,21 +120,6 @@ export const deleteComments: (text: string) => string = (text: string): string =
  */
 export const deleteScripts: (text: string) => string = (text: string): string =>
     text.replace(/\bscript\b([\s\S]+?)\bendscript\b/g, "script\nendscript");
-
-/**
- * Adds to the array display names of all present settings
- * @param array the target array
- * @returns array containing both source array content and display names
- */
-export const addDisplayNames: (array?: string[]) => string[] = (array?: string[]): string[] => {
-    const result: string[] = (array === undefined) ? [] : array;
-    for (const item of settingsMap.values()) {
-        result.push(item.displayName);
-    }
-
-    return result;
-};
-
 /**
  * @returns true if the current line contains white spaces or nothing, false otherwise
  */
@@ -219,30 +162,9 @@ colors = green
 colors = red, yellow, green`;
                 break;
             }
-            default: message = `${name} is already defined`;
+            default:
+                message = `${name} is already defined`;
         }
 
         return createDiagnostic(range, diagnosticSeverity, message);
-    };
-
-export const typeDiagnostic: (setting: Setting, range: Range, name: string, value: string) => Diagnostic =
-    (setting: Setting, range: Range, name: string, value: string): Diagnostic => {
-
-        const enumList: string | undefined = (setting.type !== "enum") ? undefined : setting.enum.join(";\n")
-            .replace("\\d\+", "{num}");
-        let msg: string;
-        let ds: DiagnosticSeverity = DiagnosticSeverity.Error;
-        if (setting.type === "enum") {
-            msg = `${name} must be one of:\n${enumList}`;
-        } else {
-            if ((setting.name === "updateinterval") && (/^\d+$/.test(value))) {
-                msg = `Specifying the interval in seconds is deprecated.
-Use \`count unit\` format, for example: \`5 minute\`.`;
-                ds = DiagnosticSeverity.Warning;
-            } else {
-                msg = `${name} type is ${setting.type}`;
-            }
-        }
-
-        return createDiagnostic(range, ds, msg);
     };
