@@ -108,6 +108,15 @@ endscript`,
             "script = if (!config.isDialog) c = widget\r\n",
             [],
         ),
+        new Test(
+            "Script content must be ignored",
+            `[widget]
+  type = chart
+  script
+    stylesheet.innerHTML = "text"
+  endscript`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });

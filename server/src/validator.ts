@@ -22,7 +22,7 @@ export class Validator {
     /**
      * Index of the current line
      */
-    private currentLineNumber: number = 0;
+    private currentLineNumber: number = -1;
     /**
      * TextRange containing name and position of the current section declaration
      */
@@ -110,10 +110,11 @@ export class Validator {
      * @returns diagnostics for all found mistakes
      */
     public lineByLine(): Diagnostic[] {
-        if (this.currentLineNumber !== 0) {
+        if (this.currentLineNumber !== -1) {
             throw new Error("You should create a new Validator");
         }
         for (const line of this.lines) {
+            this.currentLineNumber++;
             this.foundKeyword = TextRange.parse(line, this.currentLineNumber);
 
             if (this.isKeywordEnd("script")) {
@@ -132,7 +133,6 @@ export class Validator {
 
                 this.switchKeyword();
             }
-            this.currentLineNumber++;
         }
 
         this.checkAliases();
@@ -609,7 +609,7 @@ export class Validator {
      * @returns undefined if line number is higher that number of lines, corresponding line otherwise
      */
     private getLine(line: number): string | null {
-        return (line < this.lines.length) ? this.lines[line].toLowerCase() : null;
+        return (line < this.lines.length && line >= 0) ? this.lines[line].toLowerCase() : null;
     }
 
     /**
