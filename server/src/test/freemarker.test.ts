@@ -1,6 +1,6 @@
 import { DiagnosticSeverity, Range } from "vscode-languageserver";
 import { unknownToken } from "../messageUtil";
-import { createDiagnostic} from "../util";
+import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
 suite("FreeMarker unknown variables", () => {
