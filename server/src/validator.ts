@@ -379,7 +379,8 @@ export class Validator {
 
     /**
      * Creates diagnostics for statements like `${variable}`
-     * where the `variable` is not defined
+     * where the `variable` is not defined;
+     * ariphmetic operations are allowed
      */
     private checkFreemarkerValue(): void {
         if (this.match == null) {
@@ -388,16 +389,25 @@ export class Validator {
         const line: string = this.getCurrentLine();
         this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
         if (this.match !== null) {
-            const [declaration, settingName] = this.match;
+            const declaration: string = this.match[0];
+            let start, end: number;
+            let settingMatch: RegExpExecArray | null;
+            let settingName: string;
+            const regSetting: RegExp = new RegExp('(\\w+)', 'g')
             const freeMarkerVariables: string[] | undefined = this.variables.get("freemarker");
-            if (freeMarkerVariables === undefined || !freeMarkerVariables.includes(settingName)) {
-                this.result.push(createDiagnostic(
-                    Range.create(
-                        this.currentLineNumber, line.indexOf(declaration) + "\${".length,
-                        this.currentLineNumber, line.indexOf(declaration) + "\${".length + settingName.length,
-                    ),
-                    DiagnosticSeverity.Error, suggestionMessage(settingName, freeMarkerVariables),
-                ));
+            while ((settingMatch = regSetting.exec(declaration)) != null) {
+                settingName = settingMatch[0];
+                start = line.indexOf(declaration) + settingMatch.index;
+                end = start + settingName.length;
+                if (freeMarkerVariables === undefined || !freeMarkerVariables.includes(settingName) && !/\d+/.test(settingName)) {
+                    this.result.push(createDiagnostic(
+                        Range.create(
+                            this.currentLineNumber, start,
+                            this.currentLineNumber, end,
+                        ),
+                        DiagnosticSeverity.Error, suggestionMessage(settingName, freeMarkerVariables),
+                    ));
+                }
             }
         }
     }
@@ -911,7 +921,6 @@ export class Validator {
                 this.findUrlParams();
             } else {
                 this.checkFreemarkerValue();
-
             }
             // Aliases
             if (setting.name === "alias") {
