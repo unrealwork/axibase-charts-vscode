@@ -1,6 +1,6 @@
 ## v 1.0.8
 
-* Fix diagnostic messages severity levels.
+* Fix diagnostic messages severity levels
 
 ## v 1.0.7
 
