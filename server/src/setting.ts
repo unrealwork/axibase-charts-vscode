@@ -14,7 +14,7 @@ export class Setting {
         "false", "no", "null", "none", "0", "off", "true", "yes", "on", "1",
     ];
     private static readonly intervalUnits: string[] = [
-        "millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year",
+        "nanosecond", "millisecond", "second", "minute", "hour", "day", "week", "month", "quarter", "year",
     ];
 
     private static readonly booleanRegExp: RegExp = new RegExp(`^(?:${Setting.booleanKeywords.join("|")})$`);
@@ -152,20 +152,18 @@ export class Setting {
             }
             case "interval": {
                 if (!Setting.intervalRegExp.test(value)) {
+                    const message: string = `.\nFor example, ${this.example}. Supported units:\n * ${Setting.intervalUnits.join("\n * ")}`
                     if (this.name === "updateinterval" && /^\d+$/.test(value)) {
                         result = createDiagnostic(
-                            range, DiagnosticSeverity.Warning,
-                            `Specifying the interval in seconds is deprecated.
-Use \`count unit\` format, for example: \`5 minute\`.`,
+                            range, DiagnosticSeverity.Warning, `Specifying the interval in seconds is deprecated.\nUse \`count unit\` format${message}`,
                         );
                     } else {
                         result = createDiagnostic(
                             range, DiagnosticSeverity.Error,
-                            `${name} should be an interval. For example, ${this.example}`,
+                            `${name} should be set as \`count unit\`${message}`,
                         );
                     }
                 }
-
                 break;
             }
             case "date": {

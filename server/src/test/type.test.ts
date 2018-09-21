@@ -400,28 +400,27 @@ suite("Type check tests", () => {
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
+                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
+                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
                 ),
                 createDiagnostic(
                     Range.create(5, "  ".length, 5, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
+                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
                 ),
                 createDiagnostic(
                     Range.create(7, "  ".length, 7, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
+                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
                 ),
                 createDiagnostic(
                     Range.create(9, "  ".length, 9, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be an interval. For example, 1 minute",
+                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
                 ),
                 createDiagnostic(
                     Range.create(11, "  ".length, 11, "  update-interval".length),
-                    DiagnosticSeverity.Warning, `Specifying the interval in seconds is deprecated.
-Use \`count unit\` format, for example: \`5 minute\`.`,
+                    DiagnosticSeverity.Warning, `Specifying the interval in seconds is deprecated.\nUse \`count unit\` format.\nFor example, 5 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year`,
                 ),
             ],
         ),
