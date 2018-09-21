@@ -214,6 +214,18 @@ endfor`,
   [series]`,
             [],
         ),
+        new Test(
+            "Table and attribute are declared in a grandparent section",
+            `[configuration]
+  table = abc
+  attribute = cde
+[group]
+  [widget]
+    type = calendar
+    [series]
+      entity = ent1`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
