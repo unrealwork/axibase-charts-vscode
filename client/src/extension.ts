@@ -86,7 +86,13 @@ export const activate: (context: ExtensionContext) => void = async (context: Ext
     });
 
     workspace.onDidCloseTextDocument((textDocument: TextDocument) => {
-        diagnosticCollection.delete(textDocument.uri);
+        const uri: Uri = Uri.file(textDocument.uri.fsPath);
+        if (textDocument.uri.scheme === "git") {
+            const sourcePath: string = textDocument.fileName.replace(".git", "");
+            const sourceUri: Uri = Uri.file(sourcePath);
+            diagnosticCollection.delete(sourceUri);
+        }
+        diagnosticCollection.delete(uri);
     });
 
     // Start the client. This will also launch the server
