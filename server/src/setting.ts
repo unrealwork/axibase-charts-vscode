@@ -143,7 +143,7 @@ export class Setting {
                 );
                 if (index < 0) {
                     const enumList: string = this.enum.join(";\n")
-                        .replace("\\d\+", "{num}");
+                        .replace(/percentile\(.+/, "percentile_{num};");
                     result = createDiagnostic(
                         range, DiagnosticSeverity.Error, `${name} must be one of:\n${enumList}`,
                     );
@@ -152,10 +152,12 @@ export class Setting {
             }
             case "interval": {
                 if (!Setting.intervalRegExp.test(value)) {
-                    const message: string = `.\nFor example, ${this.example}. Supported units:\n * ${Setting.intervalUnits.join("\n * ")}`
+                    const message: string =
+                        `.\nFor example, ${this.example}. Supported units:\n * ${Setting.intervalUnits.join("\n * ")}`;
                     if (this.name === "updateinterval" && /^\d+$/.test(value)) {
                         result = createDiagnostic(
-                            range, DiagnosticSeverity.Warning, `Specifying the interval in seconds is deprecated.\nUse \`count unit\` format${message}`,
+                            range, DiagnosticSeverity.Warning,
+                            `Specifying the interval in seconds is deprecated.\nUse \`count unit\` format${message}`,
                         );
                     } else {
                         result = createDiagnostic(
