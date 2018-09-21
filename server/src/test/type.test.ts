@@ -485,6 +485,20 @@ threshold_percent`,
                 ),
             ],
         ),
+        new Test(
+            "Allow summarize-statistic last",
+            `[configuration]
+  summarize-statistic = last`,
+            [],
+        ),
+        new Test(
+            "Allow any percentile number in summarize-statistc",
+            `[configuration]
+  summarize-statistic = percentile_5
+[configuration]
+  summarize-statistic = percentile_76`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test): void => { test.validationTest(); });
