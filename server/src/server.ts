@@ -83,7 +83,7 @@ const validateTextDocument: (textDocument: TextDocument) => Promise<void> =
         const jsDomCaller: JsDomCaller = new JsDomCaller(text);
         const diagnostics: Diagnostic[] = validator.lineByLine();
 
-        if (settings.validateFunctions) {
+        if (settings.validateFunctions || true) {
             jsDomCaller.validate().forEach((element: Diagnostic) => {
                 diagnostics.push(element);
             });

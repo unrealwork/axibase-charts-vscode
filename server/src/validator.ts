@@ -50,6 +50,18 @@ export class Validator {
      * Stack of nested keywords. For example, if can be included to a for.
      */
     private readonly keywordsStack: TextRange[] = [];
+
+    /**
+     * Stack of brackets. For example, in var: var data = [].
+     */
+    // private readonly bracketsStack: string[] = [];
+
+    // private readonly bracketsMap: Map<string, string> = new Map([
+    //     ["{", "}"],
+    //     ["[", "]"],
+    //     ["(", ")"]
+    // ]);
+
     /**
      * Last if statement. Used to get/set settings in ifSettigns
      */
@@ -123,6 +135,9 @@ export class Validator {
             }
             if (this.isKeywordEnd("csv")) {
                 this.validateCsv();
+            }
+            if (this.isKeywordEnd("var")) {
+                continue;
             }
 
             this.eachLine();
@@ -1013,8 +1028,10 @@ export class Validator {
                 break;
             }
             case "var": {
-                if (/=\s*(\[|\{)(|.*,)\s*$/m.test(line)) {
+                let bracket: RegExpExecArray | null;
+                if ((bracket = /=\s*(\[|\{)(|.*,)\s*$/m.exec(line)) !== null) {
                     this.keywordsStack.push(this.foundKeyword);
+                    //this.bracketsStack.push(bracket[3]);
                 }
                 this.match = /(var\s*)(\w+)\s*=/.exec(line);
                 this.addToStringMap(this.variables, "varNames");
@@ -1113,4 +1130,26 @@ export class Validator {
             this.match = atRegexp.exec(line);
         }
     }
+
+    /**
+     * Creates diagnostics for incorrect JavaScript object, for example, 
+     * var data = [
+     *      abc,,,,
+     * ] 
+     * endvar 
+     */
+    // private validateVar(): void {
+    //     let varRange: Range | undefined = this.keywordsStack.find(el => (el.text === 'var'))!.range;
+    //     let varStrings: string[] = [];
+    //     let str: string | null;
+    //     if (varRange !== undefined) {
+    //         for (let i = varRange.start.line; i <= this.currentLineNumber; i++) {
+    //             str = this.getLine(i);
+    //             if (str) {
+    //                 varStrings.push()
+    //             }
+    //         }
+    //     }
+
+    // }
 }
