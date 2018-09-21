@@ -427,11 +427,13 @@
         },
         {
             "displayName": "alert-row-style",
+            "multiLine": true,
             "type": "string",
             "example": "background-color: red"
         },
         {
             "displayName": "alert-style",
+            "multiLine": true,
             "type": "string",
             "section": "link",
             "example": "stroke: red; stroke-width: 2",
@@ -674,6 +676,7 @@
         },
         {
             "displayName": "caption-style",
+            "multiLine": true,
             "type": "string",
             "example": "color: silver",
             "section": "widget"
@@ -801,6 +804,7 @@
         },
         {
             "displayName": "current-period-style",
+            "multiLine": true,
             "type": "string",
             "example": "fill-opacity: 0; stroke-width: 2; stroke-dasharray: 5, 2, 1, 2",
             "section": "widget",
@@ -2037,6 +2041,7 @@
         },
         {
             "displayName": "forecast-style",
+            "multiLine": true,
             "type": "string",
             "example": "stroke: magenta;",
             "section": "widget",
@@ -2458,6 +2463,7 @@
         },
         {
             "displayName": "header-style",
+            "multiLine": true,
             "type": "string",
             "example": "background-color: steelblue",
             "section": "widget"
@@ -2635,6 +2641,7 @@
         },
         {
             "displayName": "icon-alert-style",
+            "multiLine": true,
             "type": "string",
             "example": "return alert > 12000 ? 'fill: red' : 'fill:green';",
             "script": {
@@ -2904,6 +2911,7 @@
         },
         {
             "displayName": "link-alert-style",
+            "multiLine": true,
             "section": "series",
             "type": "string",
             "widget": "graph",
@@ -3669,6 +3677,7 @@
         },
         {
             "displayName": "negative-style",
+            "multiLine": true,
             "type": "string",
             "example": "fill: red",
             "widget": "chart",
@@ -4085,6 +4094,7 @@
         },
         {
             "displayName": "node-alert-style",
+            "multiLine": true,
             "widget": "graph",
             "type": "string",
             "example": "if (alert > 99) return 'fill:red';",
@@ -5053,6 +5063,7 @@
         },
         {
             "displayName": "row-alert-style",
+            "multiLine": true,
             "type": "string",
             "example": "background-color: orange",
             "section": "column",
@@ -5068,6 +5079,7 @@
         },
         {
             "displayName": "row-style",
+            "multiLine": true,
             "type": "string",
             "section": "column",
             "example": "value > 1 ? 'background: orange' : null",
@@ -6045,6 +6057,7 @@
         },
         {
             "displayName": "severity-style",
+            "multiLine": true,
             "type": "enum",
             "example": "row",
             "widget": "console",
@@ -6632,6 +6645,7 @@
         },
         {
             "displayName": "style",
+            "multiLine": true,
             "type": "string",
             "multiLine": true,
             "example": "stroke-width: 4; color: green"
@@ -6670,6 +6684,7 @@
         },
         {
             "displayName": "table-header-style",
+            "multiLine": true,
             "section": "widget",
             "type": "string",
             "example": "display: none"
@@ -6701,6 +6716,7 @@
         },
         {
             "displayName": "tags-dropdowns-style",
+            "multiLine": true,
             "type": "string",
             "section": "widget",
             "example": "max-width: 150px"
