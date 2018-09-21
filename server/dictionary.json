@@ -6576,6 +6576,7 @@
             "section": "series",
             "enum": [
                 "count",
+                "detail",
                 "min",
                 "max",
                 "sum",
