@@ -270,6 +270,44 @@ script = document.head.appendChild(stylesheet);`,
       label = SWIFT.WPS.1.CH`,
             [],
         ),
+        new Test(
+            "Allow *style repetitions",
+            `[widget]
+  type = table
+  alert-row-style = color:red
+  alert-row-style = color:red
+  alert-style = color:red
+  alert-style = color:red
+  caption-style = color:red
+  caption-style = color:red
+  current-period-style = color:red
+  current-period-style = color:red
+  forecast-style = color:red
+  forecast-style = color:red
+  header-style = color:red
+  header-style = color:red
+  icon-alert-style = color:red
+  icon-alert-style = color:red
+  link-alert-style = color:red
+  link-alert-style = color:red
+  negative-style = color:red
+  negative-style = color:red
+  node-alert-style = color:red
+  node-alert-style = color:red
+  row-alert-style = color:red
+  row-alert-style = color:red
+  row-style = color: red
+  row-style = color: red
+  severity-style = color: red
+  severity-style = color: red
+  style = color: red
+  style = color: red
+  table-header-style = color: red
+  table-header-style = color: red
+  tags-dropdowns-style = color: red
+  tags-dropdowns-style = color: red`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
