@@ -17,7 +17,7 @@ suite("Should diagnostics", () => {
         const docUri: Uri = getDocUri("simple.config");
         const document: TextDocument = await workspace.openTextDocument(docUri);
         await window.showTextDocument(document);
-        await sleep(1000);
+        await sleep(2000);
         const actualDiagnostic: Diagnostic[] = languages.getDiagnostics(docUri);
         strictEqual(actualDiagnostic.length, 1, "Incorrect number of messages for file");
         await commands.executeCommand("workbench.action.closeActiveEditor");
@@ -37,7 +37,7 @@ suite("Should diagnostics", () => {
         const docUri: Uri = getDocUri("simple.config");
         const document: TextDocument = await workspace.openTextDocument(docUri);
         await window.showTextDocument(document);
-        await sleep(1000);
+        await sleep(2000);
         const isEdited: boolean = await window.activeTextEditor.edit((editBuilder: TextEditorEdit) =>
             editBuilder.insert(new Position(0, 0), " "));
         ok(isEdited);
