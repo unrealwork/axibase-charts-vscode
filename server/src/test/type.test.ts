@@ -445,6 +445,14 @@ Use \`count unit\` format, for example: \`5 minute\`.`,
                 ),
             ],
         ),
+        new Test(
+            "Allow detail statistic",
+            `[series]
+  entity = test
+  metric = test
+  statistic = detail`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test): void => { test.validationTest(); });
