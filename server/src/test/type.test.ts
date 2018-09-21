@@ -3,6 +3,21 @@ import { DiagnosticSeverity, Range } from "vscode-languageserver";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
+function intervalError(name: string, example: string): string {
+    return `${name} should be set as \`count unit\`.
+For example, ${example}. Supported units:
+ * nanosecond
+ * millisecond
+ * second
+ * minute
+ * hour
+ * day
+ * week
+ * month
+ * quarter
+ * year`;
+}
+
 suite("Type check tests", () => {
     const tests: Test[] = [
         new Test(
@@ -395,32 +410,43 @@ suite("Type check tests", () => {
 [configuration]
   disconnect-interval = . year
 [configuration]
-  update-interval = 10
-  `,
+  update-interval = 10`,
             [
                 createDiagnostic(
                     Range.create(1, "  ".length, 1, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
+                    DiagnosticSeverity.Error, intervalError("disconnect-interval", "1 minute"),
                 ),
                 createDiagnostic(
                     Range.create(3, "  ".length, 3, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
+                    DiagnosticSeverity.Error, intervalError("disconnect-interval", "1 minute"),
                 ),
                 createDiagnostic(
                     Range.create(5, "  ".length, 5, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
+                    DiagnosticSeverity.Error, intervalError("disconnect-interval", "1 minute"),
                 ),
                 createDiagnostic(
                     Range.create(7, "  ".length, 7, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
+                    DiagnosticSeverity.Error, intervalError("disconnect-interval", "1 minute"),
                 ),
                 createDiagnostic(
                     Range.create(9, "  ".length, 9, "  disconnect-interval".length),
-                    DiagnosticSeverity.Error, "disconnect-interval should be set as `count unit`.\nFor example, 1 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year",
+                    DiagnosticSeverity.Error, intervalError("disconnect-interval", "1 minute"),
                 ),
                 createDiagnostic(
                     Range.create(11, "  ".length, 11, "  update-interval".length),
-                    DiagnosticSeverity.Warning, `Specifying the interval in seconds is deprecated.\nUse \`count unit\` format.\nFor example, 5 minute. Supported units:\n * nanosecond\n * millisecond\n * second\n * minute\n * hour\n * day\n * week\n * month\n * quarter\n * year`,
+                    DiagnosticSeverity.Warning, `Specifying the interval in seconds is deprecated.
+Use \`count unit\` format.
+For example, 5 minute. Supported units:
+ * nanosecond
+ * millisecond
+ * second
+ * minute
+ * hour
+ * day
+ * week
+ * month
+ * quarter
+ * year`,
                 ),
             ],
         ),
@@ -464,6 +490,214 @@ suite("Type check tests", () => {
                     DiagnosticSeverity.Error, `statistic must be one of:
 count;
 detail;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+            ],
+        ),
+        new Test(
+            "Allow summarize-statistic last",
+            `[configuration]
+  summarize-statistic = last`,
+            [],
+        ),
+        new Test(
+            "Allow any percentile number in statistic settings",
+            `[configuration]
+  group-statistic = percentile(25.5)
+[configuration]
+  statistic = percentile_255
+[configuration]
+  statistic = percentile_120
+[configuration]
+  statistics = percentile(10)
+[configuration]
+  statistics = percentile_10
+[configuration]
+  statistics = percentile(5)
+[configuration]
+  summarize-statistic = percentile_5`,
+            [],
+        ),
+        new Test(
+            "Incorrect percentile is used",
+            `[configuration]
+  group-statistic = percentile_-5
+[configuration]
+  statistic = percentile_-76
+[configuration]
+  statistics = percentile(-3)
+[configuration]
+  summarize-statistic = percentile(-93)
+[configuration]
+  group-statistic = percentile(120)
+[configuration]
+  group-statistic = percentile(a word)
+[configuration]
+  summarize-statistic = percentile_word
+[configuration]
+  statistics = percentile("a word")`,
+            [
+                createDiagnostic(
+                    Range.create(1, "  ".length, 1, "  ".length + "group-statistic".length),
+                    DiagnosticSeverity.Error, `group-statistic must be one of:
+count;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  ".length + "statistic".length),
+                    DiagnosticSeverity.Error, `statistic must be one of:
+count;
+detail;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+                createDiagnostic(
+                    Range.create(5, "  ".length, 5, "  ".length + "statistics".length),
+                    DiagnosticSeverity.Error, `statistics must be one of:
+count;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+                createDiagnostic(
+                    Range.create(7, "  ".length, 7, "  ".length + "summarize-statistic".length),
+                    DiagnosticSeverity.Error, `summarize-statistic must be one of:
+avg;
+max;
+min;
+sum;
+count;
+last;
+percentile_{num};
+median`,
+                ),
+                createDiagnostic(
+                    Range.create(9, "  ".length, 9, "  ".length + "group-statistic".length),
+                    DiagnosticSeverity.Error, `group-statistic must be one of:
+count;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+                createDiagnostic(
+                    Range.create(11, "  ".length, 11, "  ".length + "group-statistic".length),
+                    DiagnosticSeverity.Error, `group-statistic must be one of:
+count;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+                createDiagnostic(
+                    Range.create(13, "  ".length, 13, "  ".length + "summarize-statistic".length),
+                    DiagnosticSeverity.Error, `summarize-statistic must be one of:
+avg;
+max;
+min;
+sum;
+count;
+last;
+percentile_{num};
+median`,
+                ),
+                createDiagnostic(
+                    Range.create(15, "  ".length, 15, "  ".length + "statistics".length),
+                    DiagnosticSeverity.Error, `statistics must be one of:
+count;
 min;
 max;
 sum;
