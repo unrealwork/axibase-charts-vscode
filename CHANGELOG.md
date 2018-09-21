@@ -1,3 +1,7 @@
+## v 1.0.8
+
+* Fix diagnostic messages severity levels
+
 ## v 1.0.7
 
 * Validator: correct warning on `tag` section
