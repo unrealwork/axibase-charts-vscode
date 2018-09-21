@@ -6666,11 +6666,8 @@
                 "min",
                 "sum",
                 "count",
-                "percentile_99",
-                "percentile_95",
-                "percentile_90",
-                "percentile_75",
-                "percentile_50",
+                "last",
+                "percentile_\\d+",
                 "median"
             ]
         },
