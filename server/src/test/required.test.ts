@@ -226,6 +226,18 @@ endfor`,
       entity = ent1`,
             [],
         ),
+        new Test(
+            "Allow entity-expression as an alternative to entity",
+            `[configuration]
+      width-units = 6.2
+[group]
+  [widget]
+    type = chart
+    [series]
+      entity-expression = entity-1, e-2
+      metric = metric-1`,
+            [],
+        ),
     ];
 
     tests.forEach((test: Test) => { test.validationTest(); });
