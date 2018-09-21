@@ -52,6 +52,7 @@ export const requiredSectionSettingsMap: Map<string, Setting[][]> = new Map([
         [
             settingsMap.get("entity")!, settingsMap.get("value")!,
             settingsMap.get("entities")!, settingsMap.get("entitygroup")!,
+            settingsMap.get("entityexpression")!,
         ],
         [
             settingsMap.get("metric")!, settingsMap.get("value")!,
