@@ -2755,15 +2755,10 @@
         },
         {
             "displayName": "join",
-            "type": "enum",
+            "type": "string",
             "section": "widget",
             "widget": "property",
-            "example": "true",
-            "enum": [
-                "true",
-                "false",
-                "entity"
-            ]
+            "example": "true"
         },
         {
             "displayName": "key",
