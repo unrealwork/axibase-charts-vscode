@@ -444,6 +444,47 @@ suite("Type check tests", () => {
                 ),
             ],
         ),
+        new Test(
+            "Allow detail statistic",
+            `[series]
+  entity = test
+  metric = test
+  statistic = detail`,
+            [],
+        ),
+        new Test(
+            "Forbid unknown aggregator in statistic setting",
+            `[series]
+  entity = test
+  metric = test
+  statistic = unknown-aggregator`,
+            [
+                createDiagnostic(
+                    Range.create(3, "  ".length, 3, "  ".length + "statistic".length),
+                    DiagnosticSeverity.Error, `statistic must be one of:
+count;
+detail;
+min;
+max;
+sum;
+avg;
+percentile_{num};
+median;
+standard_deviation;
+first;
+last;
+delta;
+counter;
+wtavg;
+wavg;
+min_value_time;
+max_value_time;
+threshold_count;
+threshold_duration;
+threshold_percent`,
+                ),
+            ],
+        ),
     ];
 
     tests.forEach((test: Test): void => { test.validationTest(); });
