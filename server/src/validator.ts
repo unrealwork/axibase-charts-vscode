@@ -959,8 +959,7 @@ export class Validator {
         const match: RegExpMatchArray = /(^\s*)((\w+\s+)+\w+)\s*=\s*(.+?)\s*$/.exec(line);
         if (match != null && match[2]) {
             const settingName: string = match[2];
-            const isExpression: boolean = /^\s*(csv|list|else|if|for|var|endvar)/.test(line);
-            if (settingName && !isExpression && /^\w+(\s.*\w)+$/.test(settingName)) {
+            if (settingName && !this.foundKeyword && /^\w+(\s.*\w)+$/.test(settingName)) {
                 const start: number = line.indexOf(settingName);
                 const range: Range = Range.create(
                     Position.create(this.currentLineNumber, start),
