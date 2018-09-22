@@ -3,6 +3,12 @@ import { Script } from "./script";
 import { createDiagnostic } from "./util";
 
 export class Setting {
+    set originalName(value: string) {
+        this._originalName = value;
+    }
+    get originalName(): string {
+        return this._originalName;
+    }
     /**
      * Lowercases the string and deletes non-alphabetic characters
      * @param str string to be cleared
@@ -83,7 +89,7 @@ export class Setting {
     public readonly script?: Script;
     public readonly section?: string;
     public readonly type: string = "";
-
+    private _originalName: string;
     public constructor(setting?: Setting) {
         Object.assign(this, setting);
         this.enum = this.enum.map((v: string): string => v.toLowerCase());

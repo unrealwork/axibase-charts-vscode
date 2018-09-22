@@ -45,7 +45,9 @@ export function isAnyInArray<T>(target: T[], array: T[]): boolean {
 export const getSetting: (name: string) => Setting | undefined = (name: string): Setting | undefined => {
     const clearedName: string = Setting.clearSetting(name);
 
-    return settingsMap.get(clearedName);
+    const setting = settingsMap.get(clearedName);
+    setting.originalName = name;
+    return setting;
 };
 
 /**

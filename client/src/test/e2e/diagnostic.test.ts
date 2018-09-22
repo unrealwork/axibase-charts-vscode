@@ -10,7 +10,7 @@ import {
     window,
     workspace,
 } from "vscode";
-import { getDocUri, sleep } from "./helper";
+import { getDocUri, sleep } from "../helper";
 
 suite("Should diagnostics", () => {
     test("display actual count of diagnostic messages when open", async () => {

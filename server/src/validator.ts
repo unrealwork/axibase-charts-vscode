@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { deprecatedTagSection, unknownToken } from "./messageUtil";
+import { deprecatedTagSection, settingsWithWhitspaces, tagNameWithWhiteSpace, unknownToken } from "./messageUtil";
 import { possibleSections, requiredSectionSettingsMap } from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
@@ -391,7 +391,8 @@ export class Validator {
         this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
         if (this.match !== null) {
             const declaration: string = this.match[0];
-            let start: number, end: number;
+            let start: number;
+            let end: number;
             let settingMatch: RegExpExecArray | null;
             let settingName: string;
             const regSetting: RegExp = new RegExp("(\\w+)", "g");
@@ -912,7 +913,7 @@ export class Validator {
             if (!setting.multiLine) {
                 this.checkRepetition(setting);
             }
-
+            this.checkSettingsWhitespaces(setting);
             this.typeCheck(setting);
             this.checkExcludes(setting);
 
@@ -950,6 +951,25 @@ export class Validator {
         }
     }
 
+    private checkSettingsWhitespaces(setting: Setting | undefined): void {
+        const word: string = setting.originalName;
+        if (setting && /^\w+(\s.*\w)+$/.test(word)) {
+            const line: string = this.lines[this.currentLineNumber];
+            const start: number = line.indexOf(word);
+            const range: Range = Range.create(
+                Position.create(this.currentLineNumber, start),
+                Position.create(this.currentLineNumber, start + 1),
+            );
+            if (this.currentSection.text === "tags") {
+                if (!/^["].+["]$/.test(word)) {
+                    this.result.push(createDiagnostic(range, DiagnosticSeverity.Warning, tagNameWithWhiteSpace(word)));
+                }
+            } else {
+                this.result.push(createDiagnostic(range, DiagnosticSeverity.Warning, settingsWithWhitspaces(word)));
+            }
+        }
+    }
+
     /**
      * Updates the lastCondition field
      */
@@ -971,6 +991,7 @@ export class Validator {
             Position.create(this.currentLineNumber, indent),
             Position.create(this.currentLineNumber, indent + word.length),
         );
+
         if (!dictionary.includes(word)) {
             this.result.push(createDiagnostic(
                 range,
