@@ -1,7 +1,7 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
+import { deprecatedTagSection, tagNameWithWhitespaces } from "../messageUtil";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
-import { deprecatedTagSection } from "../messageUtil";
 
 const errorMessage: (setting: string) => string = (setting: string): string => `${setting} is interpreted as a` +
     " series tag and is sent to the server. Remove the setting from the [tags] section or enclose it" +
@@ -54,6 +54,21 @@ suite("Warn about deprecated [tag] section", () => {
         new Test("Deprecated [tag]",
                  `[tag]
                     a = b
+            `,   [expectedDiagnostic]),
+    ].forEach((test: Test) => test.validationTest());
+});
+
+suite("Warn about tag keys with whitespaces that not wrapped in double quotes", () => {
+    const expectedDiagnostic: Diagnostic =
+        createDiagnostic(Range.create(Position.create(1, 2),
+                                      Position.create(1, 11)),
+                         DiagnosticSeverity.Warning,
+                         tagNameWithWhitespaces("two words"));
+    [
+        new Test("Tag not wrapped in double-quote",
+                 `[tags]
+  two words  = a
+  "two words" = b
             `,   [expectedDiagnostic]),
     ].forEach((test: Test) => test.validationTest());
 });
