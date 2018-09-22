@@ -1,8 +1,8 @@
 /* tslint:disable:no-magic-numbers */
-import { DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { createDiagnostic} from "../util";
+import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
+import { settingsWithWhitespaces, unknownToken } from "../messageUtil";
+import { createDiagnostic } from "../util";
 import { Test } from "./test";
-import { unknownToken } from "../messageUtil";
 
 suite("Spelling checks", () => {
     const tests: Test[] = [
@@ -138,6 +138,26 @@ metric = cpu_iowait`,
         ),
     ];
 
-    tests.forEach((test: Test) => { test.validationTest(); });
+    tests.forEach((test: Test) => {
+        test.validationTest();
+    });
 
+});
+
+suite("Warn about setting that contains whitespaces", () => {
+    const settingsName: string = "vertical grid";
+    const expectedDiagnostic: Diagnostic = createDiagnostic(
+        Range.create(
+            Position.create(2, 0),
+            Position.create(2, settingsName.length)),
+        DiagnosticSeverity.Warning, settingsWithWhitespaces(settingsName));
+    [
+        new Test("should warn about setting with whitespaces",
+                 `[configuration]
+                 display-ticks = true
+vertical grid = true
+max-range = 100
+            `,   [expectedDiagnostic],
+        ),
+    ].forEach((test: Test) => test.validationTest());
 });

@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { deprecatedTagSection, unknownToken } from "./messageUtil";
+import { deprecatedTagSection, settingsWithWhitespaces, tagNameWithWhitespaces, unknownToken } from "./messageUtil";
 import { possibleSections, requiredSectionSettingsMap } from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
@@ -391,7 +391,8 @@ export class Validator {
         this.match = /\$\{(\w+).*\}/.exec(this.match[3]);
         if (this.match !== null) {
             const declaration: string = this.match[0];
-            let start: number, end: number;
+            let start: number;
+            let end: number;
             let settingMatch: RegExpExecArray | null;
             let settingName: string;
             const regSetting: RegExp = new RegExp("(\\w+)", "g");
@@ -534,6 +535,7 @@ export class Validator {
         } else {
             this.match = /(^\s*)([a-z].*?[a-z])\s*=\s*(.+?)\s*$/.exec(line);
             if (this.match !== null) {
+                this.checkSettingsWhitespaces();
                 this.handleSettings();
                 if (this.areWeIn("for")) {
                     this.validateFor();
@@ -912,7 +914,6 @@ export class Validator {
             if (!setting.multiLine) {
                 this.checkRepetition(setting);
             }
-
             this.typeCheck(setting);
             this.checkExcludes(setting);
 
@@ -951,6 +952,35 @@ export class Validator {
     }
 
     /**
+     * Check if settings or tag key contains whitespace and warn about it.
+     */
+    private checkSettingsWhitespaces(): void {
+        const line: string = this.lines[this.currentLineNumber];
+        const match: RegExpMatchArray = /(^\s*)((\w+\s+)+\w+)\s*=\s*(.+?)\s*$/.exec(line);
+        if (match != null && match[2]) {
+            const settingName: string = match[2];
+            if (settingName && !this.foundKeyword && /^\w+(\s.*\w)+$/.test(settingName)) {
+                const start: number = line.indexOf(settingName);
+                const range: Range = Range.create(
+                    Position.create(this.currentLineNumber, start),
+                    Position.create(this.currentLineNumber, start + settingName.length),
+                );
+                if (this.currentSection.text === "tags") {
+                    if (!/^["].+["]$/.test(settingName)) {
+                        this.result.push(createDiagnostic(range,
+                                                          DiagnosticSeverity.Warning,
+                                                          tagNameWithWhitespaces(settingName)));
+                    }
+                } else {
+                    this.result.push(createDiagnostic(range,
+                                                      DiagnosticSeverity.Warning,
+                                                      settingsWithWhitespaces(settingName)));
+                }
+            }
+        }
+    }
+
+    /**
      * Updates the lastCondition field
      */
     private setLastCondition(): void {
@@ -971,6 +1001,7 @@ export class Validator {
             Position.create(this.currentLineNumber, indent),
             Position.create(this.currentLineNumber, indent + word.length),
         );
+
         if (!dictionary.includes(word)) {
             this.result.push(createDiagnostic(
                 range,
