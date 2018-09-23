@@ -1,5 +1,9 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { deprecatedTagSection, tagNameWithWhitespaces } from "../messageUtil";
+import {
+    deprecatedTagSection,
+    settingNameInTags,
+    tagNameWithWhitespaces,
+} from "../messageUtil";
 import { createDiagnostic } from "../util";
 import { Test } from "./test";
 
@@ -53,7 +57,8 @@ suite("Warn about deprecated [tag] section", () => {
     [
         new Test("Deprecated [tag]",
                  `[tag]
-                    a = b
+                    name = a
+                    value = b
             `,   [expectedDiagnostic]),
     ].forEach((test: Test) => test.validationTest());
 });
@@ -70,5 +75,27 @@ suite("Warn about tag keys with whitespaces that not wrapped in double quotes", 
   two words  = a
   "two words" = b
             `,   [expectedDiagnostic]),
+    ].forEach((test: Test) => test.validationTest());
+});
+
+suite("Information about settingName in tags", () => {
+    const expectedDiagnostic: Diagnostic =
+        createDiagnostic(Range.create(Position.create(1, 0),
+                                      Position.create(1, 5)),
+                         DiagnosticSeverity.Information,
+                         settingNameInTags("value"));
+    [
+        new Test("setting as tag value in [tag] section",
+                 `[tags]
+value = key`,
+                 [expectedDiagnostic]),
+        new Test("setting name is correct for tag section",
+                 `[tag]
+value = correct`,
+                 [ createDiagnostic(
+                     Range.create(Position.create(0, 1),
+                                  Position.create(0, 4)),
+                     DiagnosticSeverity.Warning, deprecatedTagSection,
+                 )]),
     ].forEach((test: Test) => test.validationTest());
 });

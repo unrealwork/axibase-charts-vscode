@@ -1,5 +1,11 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range } from "vscode-languageserver";
-import { deprecatedTagSection, settingsWithWhitespaces, tagNameWithWhitespaces, unknownToken } from "./messageUtil";
+import {
+    deprecatedTagSection,
+    settingNameInTags,
+    settingsWithWhitespaces,
+    tagNameWithWhitespaces,
+    unknownToken,
+} from "./messageUtil";
 import { possibleSections, requiredSectionSettingsMap } from "./resources";
 import { Setting } from "./setting";
 import { TextRange } from "./textRange";
@@ -937,15 +943,13 @@ export class Validator {
             }
             const [, indent, name] = this.match;
             const setting: Setting | undefined = getSetting(name);
-            if (setting !== undefined) {
+            if (setting !== undefined && this.currentSection.text !== "tag") {
                 this.result.push(createDiagnostic(
                     Range.create(
                         this.currentLineNumber, indent.length,
                         this.currentLineNumber, indent.length + name.length,
                     ),
-                    DiagnosticSeverity.Information, `${name} is interpreted as a` +
-                    " series tag and is sent to the server. Remove the setting from the [tags] section or enclose it" +
-                    " double-quotes to suppress the warning.",
+                    DiagnosticSeverity.Information, settingNameInTags(name),
                 ));
             }
         }
